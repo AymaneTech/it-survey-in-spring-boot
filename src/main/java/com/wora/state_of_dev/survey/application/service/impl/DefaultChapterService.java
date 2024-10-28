@@ -1,5 +1,6 @@
 package com.wora.state_of_dev.survey.application.service.impl;
 
+import com.wora.state_of_dev.common.domain.exception.EntityCreationException;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.survey.application.dto.request.ChapterRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.ChapterResponseDto;
@@ -27,46 +28,48 @@ public class DefaultChapterService implements ChapterService {
     private final SurveyEditionRepository surveyEditionRepository;
     private final ChapterMapper mapper;
 
-//    @Override
-//    public List<ChapterResponseDto> findAll() {
-//        return repository.findAll()
-//                .stream().map(mapper::toResponseDto)
-//                .toList();
-//    }
-//
-//    @Override
-//    public ChapterResponseDto findById(ChapterId id) {
-//        return repository.findById(id)
-//                .map(mapper::toResponseDto)
-//                .orElseThrow(() -> new EntityNotFoundException("chapter", id));
-//    }
+    @Override
+    public List<ChapterResponseDto> findAllBySurveyEditionId(SurveyEditionId id) {
+        return repository.findAllBySurveyEditionId(id)
+                .stream().map(mapper::toChapterResponse)
+                .toList();
+    }
+
+    @Override
+    public ChapterResponseDto findById(ChapterId id) {
+        return repository.findById(id)
+                .map(mapper::toChapterResponse)
+                .orElseThrow(() -> new EntityNotFoundException("chapter", id));
+    }
 
     @Override
     public ChapterResponseDto create(SurveyEditionId id, ChapterRequestDto dto) {
         SurveyEdition surveyEdition = surveyEditionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("survey edition", id));
 
+        if (repository.existsByTitleAndSurveyEditionId(dto.title(), id))
+            throw new EntityCreationException("Failed to save the chapter because chapter name already used in this survey edition",
+                    List.of("title ("+ dto.title() + ") already exists in chapter of id " + id.value()));
+
         Chapter chapter = mapper.toEntity(dto)
                 .setSurveyEdition(surveyEdition);
         Chapter savedChapter = repository.save(chapter);
-        return mapper.toResponseDto(savedChapter);
+        return mapper.toChapterResponse(savedChapter);
     }
-//    @Override
-//    public ChapterResponseDto update(ChapterId id, ChapterRequestDto dto) {
-//        Chapter chapter = repository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("chapter ", id));
-//        SurveyEdition surveyEdition = surveyEditionRepository.findById(new SurveyEditionId(dto.surveyEditionId()))
-//                .orElseThrow(() -> new EntityNotFoundException("survey edition", id));
-//
-//        chapter.setTitle(dto.title())
-//                .setSurveyEdition(surveyEdition);
-//        return mapper.toResponseDto(chapter);
-//    }
-//
-//    @Override
-//    public void delete(ChapterId id) {
-//        if (!repository.existsById(id))
-//            throw new EntityNotFoundException("chapter", id);
-//        repository.deleteById(id);
-//    }
+
+    @Override
+    public ChapterResponseDto update(ChapterId id, ChapterRequestDto dto) {
+        Chapter chapter = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("chapter ", id));
+
+        chapter.setTitle(dto.title());
+        return mapper.toChapterResponse(chapter);
+    }
+
+    @Override
+    public void delete(ChapterId id) {
+        if (!repository.existsById(id))
+            throw new EntityNotFoundException("chapter", id);
+        repository.deleteById(id);
+    }
 }
