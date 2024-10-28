@@ -45,7 +45,7 @@ jobs:
         run: docker build -t it-survey-api:latest .
 
       - name: Run docker compose
-        run: docker-compose up --build -d
+        run: docker compose up --build -d
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/it-survey
           SPRING_DATASOURCE_USERNAME: user
@@ -55,7 +55,7 @@ jobs:
         run: mvn test
 
       - name: Shut down docker
-        run: docker-compose down
+        run: docker compose down
 
       - name: Login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
