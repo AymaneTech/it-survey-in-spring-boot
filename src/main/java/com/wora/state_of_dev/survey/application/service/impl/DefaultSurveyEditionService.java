@@ -1,9 +1,10 @@
-package com.wora.state_of_dev.survey.application.service;
+package com.wora.state_of_dev.survey.application.service.impl;
 
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.survey.application.dto.request.SurveyEditionRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.SurveyEditionResponseDto;
 import com.wora.state_of_dev.survey.application.mapper.SurveyEditionMapper;
+import com.wora.state_of_dev.survey.application.service.SurveyEditionService;
 import com.wora.state_of_dev.survey.domain.entities.Survey;
 import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;

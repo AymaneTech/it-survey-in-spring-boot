@@ -8,9 +8,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.data.repository.cdi.Eager;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "survey_editions")
@@ -36,6 +39,9 @@ public class SurveyEdition {
 
     @ManyToOne
     private Survey survey;
+
+    @OneToMany(mappedBy = "surveyEdition", fetch = FetchType.EAGER)
+    private List<Chapter> chapters = new ArrayList<>();
 
     private Timestamp timestamp;
 
