@@ -2,12 +2,12 @@ spring:
   application:
     name: State of dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/state_of_dev
+    url: jdbc:postgresql://localhost:5432/it_survey
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
