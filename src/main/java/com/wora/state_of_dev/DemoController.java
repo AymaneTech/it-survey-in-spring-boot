@@ -12,4 +12,9 @@ public class DemoController {
     public String fuckTheWorld() {
         return "fuck the world";
     }
+
+    @GetMapping("/hello")
+    public String fuckTheWorldTwice() {
+        return "hello again";
+    }
 }
