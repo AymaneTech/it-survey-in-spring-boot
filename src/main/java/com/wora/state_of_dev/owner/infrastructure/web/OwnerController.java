@@ -6,21 +6,17 @@ import com.wora.state_of_dev.owner.application.service.OwnerService;
 import com.wora.state_of_dev.owner.domain.OwnerId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/owners")
 @RequiredArgsConstructor
 public class OwnerController {
-
     private final OwnerService service;
-    private final ValidationAutoConfiguration validationAutoConfiguration;
 
     @GetMapping
     public ResponseEntity<List<OwnerResponseDto>> findAll() {
