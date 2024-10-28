@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install JDK 21
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-21-jdk
+          java -version
+
+      - name: Verify Java installation
+        run: echo "JAVA_HOME is $JAVA_HOME"
+
+      - name: Download Maven
+        run: |
+          wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
+          tar -xvzf apache-maven-3.9.5-bin.tar.gz
+          sudo mv apache-maven-3.9.5 /opt/maven
+          echo "export PATH=/opt/maven/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Verify Maven installation
+        run: mvn -version
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests=false
+
+      - name: Run Tests
+        run: mvn test

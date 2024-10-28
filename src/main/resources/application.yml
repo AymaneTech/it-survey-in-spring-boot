@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: State of dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/state_of_dev
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+    show-sql: true
