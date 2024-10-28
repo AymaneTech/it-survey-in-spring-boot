@@ -3,8 +3,14 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/maven.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/maven.yml'
 
 jobs:
   build:
@@ -12,34 +18,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install JDK 21
-        run: |
-          sudo apt update
-          sudo apt install -y openjdk-21-jdk
-          echo "JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64" >> $GITHUB_ENV
-          echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $GITHUB_ENV
-          echo "PATH is set to: \$PATH"
-          echo "JAVA_HOME is set to: \$JAVA_HOME"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Setup maven dependencies caching
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-      - name: Verify Java installation
-        run: |
-          echo "JAVA_HOME is $JAVA_HOME"
-          java -version
-
-      - name: Download Maven
-        run: |
-          wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
-          tar -xvzf apache-maven-3.9.5-bin.tar.gz
-          sudo mv apache-maven-3.9.5 /opt/maven
-          echo "export PATH=/opt/maven/bin:\$PATH" >> $GITHUB_ENV
-
-      - name: Verify Maven installation
-        run: mvn -version
-
-      - name: Build with Maven
-        run: mvn clean install -DskipTests=false
-
-      - name: Run Tests
-        run: mvn test
+      - name: Install maven dependecies
+        run: mvn install
+      - name: Run tests
+        run: mvn --batch-mode --update-snapshots verify
