@@ -12,7 +12,7 @@
     <artifactId>state-of-dev</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>state-of-dev</name>
-    <description>State of dev like </description>
+    <description>State of dev like</description>
     <url/>
     <licenses>
         <license/>
@@ -84,6 +84,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>it-survey</finalName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
