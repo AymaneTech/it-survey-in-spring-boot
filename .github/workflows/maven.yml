@@ -20,19 +20,20 @@ jobs:
           sudo apt install -y openjdk-21-jdk
           echo "JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64" >> $GITHUB_ENV
           echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $GITHUB_ENV
-          java -version
+          echo "PATH is set to: \$PATH"
+          echo "JAVA_HOME is set to: \$JAVA_HOME"
 
       - name: Verify Java installation
         run: |
           echo "JAVA_HOME is $JAVA_HOME"
-          java -version 
+          java -version
 
       - name: Download Maven
         run: |
           wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
           tar -xvzf apache-maven-3.9.5-bin.tar.gz
           sudo mv apache-maven-3.9.5 /opt/maven
-          echo "export PATH=/opt/maven/bin:$PATH" >> $GITHUB_ENV
+          echo "export PATH=/opt/maven/bin:\$PATH" >> $GITHUB_ENV
 
       - name: Verify Maven installation
         run: mvn -version
