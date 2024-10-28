@@ -6,11 +6,15 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/maven.yml'
+      - 'docker-compose.yml'
+      - 'Dockerfile'
   pull_request:
     branches: [ "main" ]
     paths:
       - 'src/**'
       - '.github/workflows/maven.yml'
+      - 'docker-compose.yml'
+      - 'Dockerfile'
 
 jobs:
   build:
@@ -36,3 +40,26 @@ jobs:
         run: mvn install
       - name: Run tests
         run: mvn --batch-mode --update-snapshots verify
+
+      - name: Build docker image
+        run: docker build -t it-survey-api:latest .
+
+      - name: Run docker compose
+        run: docker-compose up --build -d
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/it-survey
+          SPRING_DATASOURCE_USERNAME: user
+          SPRING_DATASOURCE_PASSWORD: password
+
+      - name: Run integration test
+        run: mvn test
+
+      - name: Shut down docker
+        run: docker-compose down
+
+      - name: Login to docker hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push docker image
+        run: docker tag it-survey-api:latest ${{ secrets.DOCKER_USERNAME }}/it-survey-api:latest && docker push ${{ secrets.DOCKER_USERNAME }}/it-survey-api:latest
+
