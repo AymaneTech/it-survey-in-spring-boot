@@ -18,10 +18,14 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y openjdk-21-jdk
+          echo "JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64" >> $GITHUB_ENV
+          echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $GITHUB_ENV
           java -version
 
       - name: Verify Java installation
-        run: echo "JAVA_HOME is $JAVA_HOME"
+        run: |
+          echo "JAVA_HOME is $JAVA_HOME"
+          java -version 
 
       - name: Download Maven
         run: |
