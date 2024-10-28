@@ -4,7 +4,6 @@ import com.wora.state_of_dev.survey.application.dto.request.ChapterRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.ChapterResponseDto;
 import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
-import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 
 import java.util.List;
 

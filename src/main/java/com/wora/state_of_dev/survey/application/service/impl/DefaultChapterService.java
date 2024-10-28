@@ -31,14 +31,14 @@ public class DefaultChapterService implements ChapterService {
     @Override
     public List<ChapterResponseDto> findAllBySurveyEditionId(SurveyEditionId id) {
         return repository.findAllBySurveyEditionId(id)
-                .stream().map(mapper::toResponseDto)
+                .stream().map(mapper::toChapterResponse)
                 .toList();
     }
 
     @Override
     public ChapterResponseDto findById(ChapterId id) {
         return repository.findById(id)
-                .map(mapper::toResponseDto)
+                .map(mapper::toChapterResponse)
                 .orElseThrow(() -> new EntityNotFoundException("chapter", id));
     }
 
@@ -54,7 +54,7 @@ public class DefaultChapterService implements ChapterService {
         Chapter chapter = mapper.toEntity(dto)
                 .setSurveyEdition(surveyEdition);
         Chapter savedChapter = repository.save(chapter);
-        return mapper.toResponseDto(savedChapter);
+        return mapper.toChapterResponse(savedChapter);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DefaultChapterService implements ChapterService {
                 .orElseThrow(() -> new EntityNotFoundException("chapter ", id));
 
         chapter.setTitle(dto.title());
-        return mapper.toResponseDto(chapter);
+        return mapper.toChapterResponse(chapter);
     }
 
     @Override
