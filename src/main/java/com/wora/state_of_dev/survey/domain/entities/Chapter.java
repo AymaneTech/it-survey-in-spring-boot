@@ -16,8 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-public class Chapter {
+public  Chapter {
 
-    @EmbeddedId
     private ChapterId id;
 }
