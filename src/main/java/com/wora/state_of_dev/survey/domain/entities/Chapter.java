@@ -27,12 +27,22 @@ public class Chapter {
     private String title;
 
     @ManyToOne
+    @JoinColumn(name = "survey_edition_id")
     private SurveyEdition surveyEdition;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Chapter subChapter;
+    @JoinColumn(name = "parent_chapter_id")
+    private Chapter parentChapter;
 
     public Chapter(String title) {
         this.title = title;
+    }
+
+    public boolean isSurveyEditionParent() {
+        return surveyEdition != null && parentChapter == null;
+    }
+
+    public boolean isSubChapter() {
+        return parentChapter != null && surveyEdition == null;
     }
 }
