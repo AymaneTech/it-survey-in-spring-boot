@@ -1,0 +1,40 @@
+package com.wora.state_of_dev.survey.domain.entities;
+
+import com.wora.state_of_dev.survey.domain.valueObject.AnswerType;
+import com.wora.state_of_dev.survey.domain.valueObject.QuestionId;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.List;
+
+@Entity
+@Table(name = "questions")
+
+@Getter
+@Setter
+@Accessors(chain = true)
+@NoArgsConstructor
+public class Question {
+
+    @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
+    private QuestionId id;
+
+    private String text;
+
+    @Column(name = "answer_count")
+    private Integer answerCount;
+
+    @Enumerated(EnumType.STRING)
+    private AnswerType answerType;
+
+    @OneToMany
+    private List<Answer> answers;
+
+    public Question(String text) {
+        this.text = text;
+    }
+}
