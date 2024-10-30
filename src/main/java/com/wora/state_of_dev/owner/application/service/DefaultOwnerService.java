@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 @Validated
 @RequiredArgsConstructor
-public class DefaultOwnerService implements OwnerService {
+class DefaultOwnerService implements OwnerService {
     private final OwnerRepository repository;
     private final OwnerMapper mapper;
 
@@ -34,7 +34,7 @@ public class DefaultOwnerService implements OwnerService {
     public OwnerResponseDto findById(OwnerId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
-                .orElseThrow(() -> new EntityNotFoundException("owner ", id));
+                .orElseThrow(() -> new EntityNotFoundException("owner", id.value()));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DefaultOwnerService implements OwnerService {
     @Override
     public OwnerResponseDto update(OwnerId id, OwnerRequestDto dto) {
         Owner owner = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("owner ", id));
+                .orElseThrow(() -> new EntityNotFoundException("owner ", id.value()));
 
         owner.setName(dto.name());
         return mapper.toResponseDto(owner);
