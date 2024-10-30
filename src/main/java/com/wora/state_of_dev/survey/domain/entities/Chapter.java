@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Entity
 @Table(name = "chapters")
 
@@ -33,6 +35,9 @@ public class Chapter {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_chapter_id")
     private Chapter parentChapter;
+
+    @OneToMany(mappedBy = "chapter", fetch = FetchType.EAGER)
+    private List<Question> questions;
 
     public Chapter(String title) {
         this.title = title;

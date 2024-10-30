@@ -31,10 +31,23 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private AnswerType answerType;
 
-    @OneToMany
+    @ManyToOne
+    private Chapter chapter;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
 
     public Question(String text) {
         this.text = text;
+    }
+
+    public Question _setAnswers(List<Answer> answers) {
+        answers.forEach(answer -> answer.setQuestion(this));
+        this.answers = answers;
+        return this;
+    }
+
+    public void incrementAnswerCount() {
+        this.answerCount++;
     }
 }
