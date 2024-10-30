@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse runtime(RuntimeException e, WebRequest request) {
         return new ErrorResponse(
