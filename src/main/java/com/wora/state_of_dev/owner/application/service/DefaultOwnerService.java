@@ -46,7 +46,7 @@ class DefaultOwnerService implements OwnerService {
     @Override
     public OwnerResponseDto update(OwnerId id, OwnerRequestDto dto) {
         Owner owner = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("owner ", id.value()));
+                .orElseThrow(() -> new EntityNotFoundException("owner", id.value()));
 
         owner.setName(dto.name());
         return mapper.toResponseDto(owner);

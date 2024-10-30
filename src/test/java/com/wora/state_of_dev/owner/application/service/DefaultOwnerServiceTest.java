@@ -124,11 +124,26 @@ class DefaultOwnerServiceTest {
     class UpdateTests {
         @Test
         void given_ownerDoesNotExists_whenUpdate_shouldThrowEntityNotFoundException() {
-            given(repository.findById(owner.getId())).willReturn(Optional.empty());
+            given(repository.findById(any(OwnerId.class))).willReturn(Optional.empty());
 
             assertThatExceptionOfType(EntityNotFoundException.class)
                     .isThrownBy(() -> sut.update(new OwnerId(3L), new OwnerRequestDto("not existing owner")))
-                    .withMessageContaining("");
+                    .withMessageContaining("owner with id 3 not found");
+        }
+
+        @Test
+        void given_ownerExists_whenUpdate_shouldUpdateAndReturnOwner() {
+            given(repository.findById(any(OwnerId.class))).willReturn(Optional.of(owner));
+            given(mapper.toResponseDto(any(Owner.class)))
+                    .willAnswer(invocation -> {
+                        Owner arg = invocation.getArgument(0);
+                        return new OwnerResponseDto(arg.getId().value(), arg.getName());
+                    });
+
+            OwnerResponseDto actual = sut.update(owner.getId(), new OwnerRequestDto("new name"));
+
+            assertThat(actual.name()).isEqualTo("new name");
+            verify(repository).findById(any(OwnerId.class));
         }
     }
 
