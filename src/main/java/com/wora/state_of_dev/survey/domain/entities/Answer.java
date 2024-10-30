@@ -25,6 +25,10 @@ public class Answer {
     @Column(name = "select_count")
     private Integer selectCount;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
+
+    public void incrementSelectCount() {
+        this.selectCount++;
+    }
 }
