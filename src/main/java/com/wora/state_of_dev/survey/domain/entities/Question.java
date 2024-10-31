@@ -37,8 +37,11 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
 
-    public Question(String text) {
+    public Question(Long id, String text, AnswerType answerType, Chapter chapter) {
+        this.id = new QuestionId(id);
         this.text = text;
+        this.answerType = answerType;
+        this.chapter = chapter;
     }
 
     public Question _setAnswers(List<Answer> answers) {

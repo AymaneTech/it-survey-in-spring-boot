@@ -38,11 +38,13 @@ public class DefaultQuestionService implements QuestionService {
                 .toList();
     }
 
+    // todo : add findByChapterId, findBySurveyEditionId
+
     @Override
     public QuestionResponseDto findById(QuestionId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
-                .orElseThrow(() -> new EntityNotFoundException("question", id));
+                .orElseThrow(() -> new EntityNotFoundException("question", id.value()));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class DefaultQuestionService implements QuestionService {
     @Override
     public QuestionResponseDto update(QuestionId id, QuestionRequestDto dto) {
         Question question = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("question", id));
+                .orElseThrow(() -> new EntityNotFoundException("question", id.value()));
         Chapter chapter = chapterRepository.findById(new ChapterId(dto.chapterId()))
                 .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
 
@@ -76,7 +78,7 @@ public class DefaultQuestionService implements QuestionService {
     @Override
     public void delete(QuestionId id) {
         if (!repository.existsById(id))
-            throw new EntityNotFoundException("question", id);
+            throw new EntityNotFoundException("question", id.value());
         repository.deleteById(id);
     }
 
