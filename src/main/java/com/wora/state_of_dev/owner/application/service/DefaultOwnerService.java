@@ -55,7 +55,7 @@ class DefaultOwnerService implements OwnerService {
     @Override
     public void delete(OwnerId id) {
         if (!repository.existsById(id))
-            throw new EntityNotFoundException("owner", id);
+            throw new EntityNotFoundException("owner", id.value());
 
         repository.deleteById(id);
     }

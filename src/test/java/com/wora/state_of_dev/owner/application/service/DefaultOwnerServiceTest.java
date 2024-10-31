@@ -147,5 +147,25 @@ class DefaultOwnerServiceTest {
         }
     }
 
+    @Nested
+    class DeleteTests {
+        @Test
+        void given_ownerDoesNotExists_whenDelete_shouldThrowEntityNotFoundException() {
+            given(repository.existsById(any(OwnerId.class))).willReturn(false);
 
+            assertThatExceptionOfType(EntityNotFoundException.class)
+                    .isThrownBy(() -> sut.delete(new OwnerId(2L)))
+                    .withMessageContaining("owner with id 2 not found");
+        }
+
+        @Test
+        void given_ownerIdExists_whenDelete_shouldDeleteOwner() {
+            given(repository.existsById(any(OwnerId.class))).willReturn(true);
+
+            sut.delete(new OwnerId(3L));
+
+            verify(repository).existsById(any(OwnerId.class));
+            verify(repository).deleteById(any(OwnerId.class));
+        }
+    }
 }
