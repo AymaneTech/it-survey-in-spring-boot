@@ -2,7 +2,6 @@ package com.wora.state_of_dev.survey.application.service;
 
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.owner.application.dto.OwnerEmbeddableDto;
-import com.wora.state_of_dev.owner.application.dto.OwnerRequestDto;
 import com.wora.state_of_dev.owner.domain.Owner;
 import com.wora.state_of_dev.owner.domain.OwnerId;
 import com.wora.state_of_dev.owner.domain.OwnerRepository;
@@ -143,6 +142,17 @@ class DefaultSurveyServiceTest {
             verify(ownerRepository).findById(any(OwnerId.class));
             verify(repository).save(any(Survey.class));
         }
+
+        @Test
+        void given_ownerIdDoesNotExists_whenCreate_shouldCreateAndReturnSurvey() {
+            SurveyRequestDto expected = new SurveyRequestDto("state of motherfuckers", "state of motherfuckers in morocco", 1L);
+
+            given(ownerRepository.findById(eq(owner.getId()))).willReturn(Optional.empty());
+
+            assertThatExceptionOfType(EntityNotFoundException.class)
+                    .isThrownBy(() -> sut.create(expected))
+                    .withMessageContaining("owner with id 1 not found");
+        }
     }
 
     @Nested
@@ -202,7 +212,7 @@ class DefaultSurveyServiceTest {
         }
 
         @Test
-        void given_surveyExists_whenDelete_shouldDeleteSurvey(){
+        void given_surveyExists_whenDelete_shouldDeleteSurvey() {
             given(repository.existsById(any(SurveyId.class))).willReturn(true);
 
             sut.delete(new SurveyId(3L));
