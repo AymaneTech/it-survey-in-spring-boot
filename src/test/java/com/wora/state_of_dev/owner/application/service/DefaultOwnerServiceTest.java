@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,13 +34,13 @@ class DefaultOwnerServiceTest {
     @Mock
     private OwnerMapper mapper;
 
-    private OwnerService sut;
+    @InjectMocks
+    private DefaultOwnerService sut;
 
     private Owner owner;
 
     @BeforeEach
     void setup() {
-        sut = new DefaultOwnerService(repository, mapper);
         owner = new Owner("mr owner").setId(new OwnerId(1L));
     }
 
