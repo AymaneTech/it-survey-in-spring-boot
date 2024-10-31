@@ -38,7 +38,7 @@ public class DefaultSurveyService implements SurveyService {
     public SurveyResponseDto findById(SurveyId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
-                .orElseThrow(() -> new EntityNotFoundException("survey", id));
+                .orElseThrow(() -> new EntityNotFoundException("survey", id.value()));
 
     }
 
@@ -56,7 +56,7 @@ public class DefaultSurveyService implements SurveyService {
     @Override
     public SurveyResponseDto update(SurveyId id, SurveyRequestDto dto) {
         Survey survey = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("survey ", id));
+                .orElseThrow(() -> new EntityNotFoundException("survey", id.value()));
         Owner owner = ownerRepository.findById(new OwnerId(dto.ownerId()))
                 .orElseThrow(() -> new EntityNotFoundException("owner", dto.ownerId()));
 
@@ -70,7 +70,7 @@ public class DefaultSurveyService implements SurveyService {
     @Override
     public void delete(SurveyId id) {
         if (!repository.existsById(id))
-            throw new EntityNotFoundException("survey", id);
+            throw new EntityNotFoundException("survey", id.value());
 
         repository.deleteById(id);
     }
