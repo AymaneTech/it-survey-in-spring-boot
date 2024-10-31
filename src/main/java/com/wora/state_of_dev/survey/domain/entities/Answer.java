@@ -28,6 +28,11 @@ public class Answer {
     @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
 
+    public Answer(Long id, String text) {
+        this.id = new AnswerId(id);
+        this.text = text;
+    }
+
     public void incrementSelectCount() {
         this.selectCount++;
     }
