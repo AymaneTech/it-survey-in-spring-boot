@@ -4,7 +4,8 @@ import com.wora.state_of_dev.owner.application.dto.OwnerEmbeddableDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record SurveyEmbeddableDto(@NotBlank String title,
+public record SurveyEmbeddableDto(@NotNull Long id,
+                                  @NotBlank String title,
                                   @NotBlank String description,
                                   @NotNull OwnerEmbeddableDto owner
 ) {
