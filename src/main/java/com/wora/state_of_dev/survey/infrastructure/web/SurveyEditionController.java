@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/survey-editions")
 @RequiredArgsConstructor
-public class SurveyEditionController {
+class SurveyEditionController {
     private final SurveyEditionService service;
 
     @GetMapping
