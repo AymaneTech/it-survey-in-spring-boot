@@ -6,4 +6,5 @@ import com.wora.state_of_dev.survey.application.dto.response.QuestionResponseDto
 import com.wora.state_of_dev.survey.domain.valueObject.QuestionId;
 
 public interface QuestionService extends CrudService<QuestionId, QuestionRequestDto, QuestionResponseDto> {
+    // todo : add findByChapterId, findBySurveyEditionId
 }
