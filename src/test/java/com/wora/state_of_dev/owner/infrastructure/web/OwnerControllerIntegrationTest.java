@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import(GlobalExceptionHandler.class)
 @Transactional
-class OwnerControllerTest {
+class OwnerControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final OwnerService ownerService;
@@ -35,7 +35,7 @@ class OwnerControllerTest {
     private OwnerResponseDto createdOwner;
 
     @Autowired
-    public OwnerControllerTest(MockMvc mockMvc, ObjectMapper objectMapper, OwnerService ownerService) {
+    public OwnerControllerIntegrationTest(MockMvc mockMvc, ObjectMapper objectMapper, OwnerService ownerService) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.ownerService = ownerService;

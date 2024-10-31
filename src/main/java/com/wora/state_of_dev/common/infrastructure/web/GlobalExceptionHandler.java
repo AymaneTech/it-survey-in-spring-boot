@@ -45,19 +45,19 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 "Data Integrity Violation",
                 request.getDescription(false),
-                Map.of("error", e.getMostSpecificCause().getMessage())
+                e.getMostSpecificCause().getMessage()
         );
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse entityNotFoundException(final EntityNotFoundException ex, WebRequest request) {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
-                ex.getMessage(),
+                "resource you are looking for not found",
                 request.getDescription(false),
-                Map.of()
+                ex.getMessage()
         );
     }
 
@@ -67,9 +67,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
-                ex.getMessage(),
+                "illegal argument exception",
                 request.getDescription(false),
-                Map.of()
+                ex.getMessage()
         );
     }
 
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false),
-                Map.of("error", String.join("\n", ex.errors()))
+                String.join("\n", ex.errors())
         );
     }
 
@@ -91,9 +91,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
-                "uncatched exception from aymane",
+                "this exception not specified, caught just by global exception",
                 request.getDescription(false),
-                Map.of("error", e.getMessage())
+                e.getMessage()
         );
     }
 }
