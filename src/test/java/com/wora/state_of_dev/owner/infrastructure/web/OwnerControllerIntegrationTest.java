@@ -32,7 +32,6 @@ class OwnerControllerIntegrationTest {
     private final ObjectMapper objectMapper;
     private final OwnerService ownerService;
 
-    private OwnerRequestDto validRequestDto;
     private OwnerResponseDto createdOwner;
 
     @Autowired
@@ -44,7 +43,7 @@ class OwnerControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        validRequestDto = new OwnerRequestDto("aymane el maini");
+        OwnerRequestDto validRequestDto = new OwnerRequestDto("aymane el Maini");
         createdOwner = ownerService.create(validRequestDto);
     }
 
