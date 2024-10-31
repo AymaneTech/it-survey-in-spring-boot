@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/chapters/{chapterId}/sub-chapters")
 @RequiredArgsConstructor
-public class SubChapterController {
+class SubChapterController {
     private final SubChapterService service;
 
     @PostMapping

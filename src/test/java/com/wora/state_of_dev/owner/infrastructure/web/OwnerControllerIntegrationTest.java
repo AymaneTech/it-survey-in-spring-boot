@@ -7,6 +7,7 @@ import com.wora.state_of_dev.owner.application.dto.OwnerResponseDto;
 import com.wora.state_of_dev.owner.application.service.OwnerService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +32,6 @@ class OwnerControllerIntegrationTest {
     private final ObjectMapper objectMapper;
     private final OwnerService ownerService;
 
-    private OwnerRequestDto validRequestDto;
     private OwnerResponseDto createdOwner;
 
     @Autowired
@@ -43,7 +43,7 @@ class OwnerControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        validRequestDto = new OwnerRequestDto("aymane el maini");
+        OwnerRequestDto validRequestDto = new OwnerRequestDto("aymane el Maini");
         createdOwner = ownerService.create(validRequestDto);
     }
 
@@ -59,110 +59,122 @@ class OwnerControllerIntegrationTest {
                 .andDo(print());
     }
 
-    @Test
-    @Rollback
-    void givenOwnerIdDoesNotExist_whenFindById_shouldReturnNotFound() throws Exception {
-        Long id = 1000L;
-        mockMvc.perform(get("/api/v1/owners/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+    @Nested
+    class FindByIdTests {
+        @Test
+        @Rollback
+        void givenOwnerIdDoesNotExist_whenFindById_shouldReturnNotFound() throws Exception {
+            Long id = 1000L;
+            mockMvc.perform(get("/api/v1/owners/{id}", id))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
 
-                .andDo(print());
+                    .andDo(print());
+        }
+
+        @Test
+        @Rollback
+        void givenOwnerIdExists_whenFindById_shouldReturnFoundOwner() throws Exception {
+            mockMvc.perform(get("/api/v1/owners/{id}", createdOwner.id()))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+        }
     }
 
-    @Test
-    @Rollback
-    void givenOwnerIdExists_whenFindById_shouldReturnFoundOwner() throws Exception {
-        mockMvc.perform(get("/api/v1/owners/{id}", createdOwner.id()))
-                .andExpect(status().isOk())
-                .andDo(print());
+    @Nested
+    class CreateTests {
+        @Test
+        @Rollback
+        void givenCorrectOwnerRequest_whenCreate_shouldReturnCreatedOwner() throws Exception {
+            OwnerRequestDto newOwner = new OwnerRequestDto("yahya el maini");
+
+            mockMvc.perform(post("/api/v1/owners")
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(newOwner)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.name").value(newOwner.name()))
+                    .andDo(print());
+        }
+
+        @Test
+        @Rollback
+        void givenInvalidRequest_whenCreate_shouldReturnBadRequest() throws Exception {
+            OwnerRequestDto newOwner = new OwnerRequestDto("");
+            mockMvc.perform(post("/api/v1/owners")
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(newOwner)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value("Validation failed"))
+                    .andExpect(jsonPath("$.errors.name").value("must not be blank"))
+                    .andDo(print());
+        }
     }
 
-    @Test
-    @Rollback
-    void givenCorrectOwnerRequest_whenCreate_shouldReturnCreatedOwner() throws Exception {
-        OwnerRequestDto newOwner = new OwnerRequestDto("yahya el maini");
+    @Nested
+    class UpdateTests {
+        @Test
+        @Rollback
+        void givenCorrectOwnerRequestAndExistentId_whenUpdate_shouldReturnUpdatedOwner() throws Exception {
+            OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
 
-        mockMvc.perform(post("/api/v1/owners")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(newOwner)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(newOwner.name()))
-                .andDo(print());
+            mockMvc.perform(put("/api/v1/owners/{id}", createdOwner.id())
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(updateRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name").value(updateRequest.name()))
+                    .andExpect(jsonPath("$.id").value(createdOwner.id()))
+                    .andDo(print());
+        }
+
+        @Test
+        @Rollback
+        void givenCorrectOwnerRequestAndNotExistentId_whenUpdate_shouldReturnNotFound() throws Exception {
+            OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
+
+            mockMvc.perform(put("/api/v1/owners/{id}", 444L)
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(updateRequest)))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+                    .andDo(print());
+        }
+
+        @Test
+        @Rollback
+        void givenInvalidRequest_whenUpdate_shouldReturnBadRequest() throws Exception {
+            OwnerRequestDto updateRequest = new OwnerRequestDto("");
+            mockMvc.perform(put("/api/v1/owners/{id}", 1L)
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(updateRequest)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value("Validation failed"))
+                    .andExpect(jsonPath("$.errors.name").value("must not be blank"))
+                    .andDo(print());
+        }
     }
 
-    @Test
-    @Rollback
-    void givenInvalidRequest_whenCreate_shouldReturnBadRequest() throws Exception {
-        OwnerRequestDto newOwner = new OwnerRequestDto("");
-        mockMvc.perform(post("/api/v1/owners")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(newOwner)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.errors.name").value("must not be blank"))
-                .andDo(print());
+    @Nested
+    class DeleteTests {
+
+        @Test
+        @Rollback
+        void givenExistentId_whenDelete_shouldDeleteOwnerAndReturnNoContent() throws Exception {
+            System.out.println(ownerService.findAll());
+            mockMvc.perform(delete("/api/v1/owners/{id}", createdOwner.id()))
+                    .andExpect(status().isNoContent())
+                    .andDo(print());
+        }
+
+        @Test
+        @Rollback
+        void givenNoExistentId_whenDelete_shouldReturnNotFound() throws Exception {
+            mockMvc.perform(delete("/api/v1/owners/{id}", 30303L))
+                    .andExpect(status().isNotFound())
+                    .andDo(print());
+        }
     }
-
-    @Test
-    @Rollback
-    void givenCorrectOwnerRequestAndExistentId_whenUpdate_shouldReturnUpdatedOwner() throws Exception {
-        OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
-
-        mockMvc.perform(put("/api/v1/owners/{id}", createdOwner.id())
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(updateRequest.name()))
-                .andExpect(jsonPath("$.id").value(createdOwner.id()))
-                .andDo(print());
-    }
-
-    @Test
-    @Rollback
-    void givenCorrectOwnerRequestAndNotExistentId_whenUpdate_shouldReturnNotFound() throws Exception {
-        OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
-
-        mockMvc.perform(put("/api/v1/owners/{id}", 444L)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
-                .andDo(print());
-    }
-
-    @Test
-    @Rollback
-    void givenInvalidRequest_whenUpdate_shouldReturnBadRequest() throws Exception {
-        OwnerRequestDto updateRequest = new OwnerRequestDto("");
-        mockMvc.perform(put("/api/v1/owners/{id}", 1L)
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed"))
-                .andExpect(jsonPath("$.errors.name").value("must not be blank"))
-                .andDo(print());
-    }
-
-    @Test
-    @Rollback
-    void givenExistentId_whenDelete_shouldDeleteOwnerAndReturnNoContent() throws Exception {
-        System.out.println(ownerService.findAll());
-        mockMvc.perform(delete("/api/v1/owners/{id}", createdOwner.id()))
-                .andExpect(status().isNoContent())
-                .andDo(print());
-    }
-
-    @Test
-    @Rollback
-    void givenNoExistentId_whenDelete_shouldReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/v1/owners/{id}", 30303L))
-                .andExpect(status().isNotFound())
-                .andDo(print());
-    }
-
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class ChapterController {
+class ChapterController {
     private final ChapterService service;
 
     @PostMapping("/survey-editions/{id}/chapters")
