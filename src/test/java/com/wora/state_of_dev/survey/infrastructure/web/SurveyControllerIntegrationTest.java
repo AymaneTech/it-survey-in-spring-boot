@@ -9,6 +9,7 @@ import com.wora.state_of_dev.survey.application.dto.request.SurveyRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.SurveyResponseDto;
 import com.wora.state_of_dev.survey.application.service.SurveyService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHan
 import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(GlobalExceptionHandler.class)
 @ActiveProfiles("test")
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class SurveyControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -41,14 +42,6 @@ class SurveyControllerIntegrationTest {
 
     private OwnerResponseDto owner;
     private SurveyResponseDto createdSurvey;
-
-    @Autowired
-    public SurveyControllerIntegrationTest(MockMvc mockMvc, ObjectMapper objectMapper, SurveyService surveyService, OwnerService ownerService) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
-        this.surveyService = surveyService;
-        this.ownerService = ownerService;
-    }
 
     @BeforeEach
     void setUp() {
@@ -65,8 +58,7 @@ class SurveyControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(createdSurvey.id()))
-                .andExpect(jsonPath("$[0].title").value(createdSurvey.title()))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].title").value(createdSurvey.title()));
     }
 
     @Nested
@@ -77,8 +69,7 @@ class SurveyControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/surveys/{id}", 303L))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
@@ -87,8 +78,7 @@ class SurveyControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/surveys/{id}", createdSurvey.id()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(createdSurvey.id()))
-                    .andExpect(jsonPath("$.title").value(createdSurvey.title()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.title").value(createdSurvey.title()));
         }
     }
 
@@ -102,8 +92,7 @@ class SurveyControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.title").value(surveyRequest.title()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.title").value(surveyRequest.title()));
         }
 
         @Test
@@ -115,8 +104,7 @@ class SurveyControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
@@ -128,8 +116,7 @@ class SurveyControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED));
         }
     }
 

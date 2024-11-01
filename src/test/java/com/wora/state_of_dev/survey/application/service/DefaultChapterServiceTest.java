@@ -13,10 +13,7 @@ import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -67,6 +64,7 @@ class DefaultChapterServiceTest {
                     .setSurveyEdition(surveyEdition);
             List<Chapter> expected = List.of(chapter, chapter2);
 
+            given(surveyEditionRepository.existsById(any(SurveyEditionId.class))).willReturn(true);
             given(repository.findAllBySurveyEditionId(any(SurveyEditionId.class))).willReturn(expected);
             given(mapper.toChapterResponse(any(Chapter.class)))
                     .willAnswer(invocation -> {
@@ -90,6 +88,7 @@ class DefaultChapterServiceTest {
 
         @Test
         void given_noChaptersExist_whenFindAllBySurveyEditionId_shouldReturnEmptyList() {
+            given(surveyEditionRepository.existsById(any(SurveyEditionId.class))).willReturn(true);
             given(repository.findAllBySurveyEditionId(any(SurveyEditionId.class))).willReturn(List.of());
 
             List<ChapterResponseDto> actual = sut.findAllBySurveyEditionId(new SurveyEditionId(5L));
@@ -97,6 +96,15 @@ class DefaultChapterServiceTest {
             assertThat(actual).isEmpty();
             verify(repository).findAllBySurveyEditionId(any(SurveyEditionId.class));
             verify(mapper, never()).toChapterResponse(any(Chapter.class));
+        }
+
+        @Test
+        void givenInvalidSurveyEditionId_whenFindAllBySurveyEditionId_shouldThrowEntityNotFoundException() {
+            given(surveyEditionRepository.existsById(any(SurveyEditionId.class))).willReturn(false);
+
+            assertThatExceptionOfType(EntityNotFoundException.class)
+                    .isThrownBy(() -> sut.findAllBySurveyEditionId(new SurveyEditionId(1L)))
+                    .withMessageContaining("survey edition with id 1 not found");
         }
     }
 

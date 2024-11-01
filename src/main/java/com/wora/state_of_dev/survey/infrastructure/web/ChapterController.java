@@ -7,6 +7,7 @@ import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ class ChapterController {
     @PostMapping("/survey-editions/{id}/chapters")
     public ResponseEntity<ChapterResponseDto> create(@PathVariable Long id, @RequestBody @Valid ChapterRequestDto dto) {
         ChapterResponseDto chapter = service.create(new SurveyEditionId(id), dto);
-        return ResponseEntity.ok(chapter);
+        return new ResponseEntity<>(chapter, HttpStatus.CREATED);
     }
 
     @GetMapping("/survey-editions/{id}/chapters")

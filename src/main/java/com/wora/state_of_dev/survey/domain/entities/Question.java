@@ -26,7 +26,7 @@ public class Question {
     private String text;
 
     @Column(name = "answer_count")
-    private Integer answerCount;
+    private int answerCount;
 
     @Enumerated(EnumType.STRING)
     private AnswerType answerType;
