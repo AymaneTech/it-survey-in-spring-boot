@@ -15,8 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.ENTITY_NOT_FOUND;
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(GlobalExceptionHandler.class)
+@ActiveProfiles("test")
 @Transactional
 class OwnerControllerIntegrationTest {
     private final MockMvc mockMvc;
@@ -68,7 +72,7 @@ class OwnerControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/owners/{id}", id))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
 
                     .andDo(print());
         }
@@ -90,7 +94,7 @@ class OwnerControllerIntegrationTest {
             OwnerRequestDto newOwner = new OwnerRequestDto("yahya el maini");
 
             mockMvc.perform(post("/api/v1/owners")
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(newOwner)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.name").value(newOwner.name()))
@@ -102,11 +106,11 @@ class OwnerControllerIntegrationTest {
         void givenInvalidRequest_whenCreate_shouldReturnBadRequest() throws Exception {
             OwnerRequestDto newOwner = new OwnerRequestDto("");
             mockMvc.perform(post("/api/v1/owners")
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(newOwner)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value("Validation failed"))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
                     .andExpect(jsonPath("$.errors.name").value("must not be blank"))
                     .andDo(print());
         }
@@ -120,7 +124,7 @@ class OwnerControllerIntegrationTest {
             OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
 
             mockMvc.perform(put("/api/v1/owners/{id}", createdOwner.id())
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value(updateRequest.name()))
@@ -134,11 +138,11 @@ class OwnerControllerIntegrationTest {
             OwnerRequestDto updateRequest = new OwnerRequestDto("new name motherfucker");
 
             mockMvc.perform(put("/api/v1/owners/{id}", 444L)
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
                     .andDo(print());
         }
 
@@ -147,11 +151,11 @@ class OwnerControllerIntegrationTest {
         void givenInvalidRequest_whenUpdate_shouldReturnBadRequest() throws Exception {
             OwnerRequestDto updateRequest = new OwnerRequestDto("");
             mockMvc.perform(put("/api/v1/owners/{id}", 1L)
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value("Validation failed"))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
                     .andExpect(jsonPath("$.errors.name").value("must not be blank"))
                     .andDo(print());
         }

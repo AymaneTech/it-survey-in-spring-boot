@@ -19,6 +19,9 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    public static final String VALIDATION_FAILED = "Validation failed";
+    public static final String ENTITY_NOT_FOUND = "Resource Not Found";
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationExceptions(final MethodArgumentNotValidException ex, WebRequest request) {
@@ -32,7 +35,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
-                "Validation failed",
+                VALIDATION_FAILED,
                 request.getDescription(false),
                 errors);
     }
@@ -55,7 +58,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now(),
-                "resource you are looking for not found",
+                ENTITY_NOT_FOUND,
                 request.getDescription(false),
                 ex.getMessage()
         );

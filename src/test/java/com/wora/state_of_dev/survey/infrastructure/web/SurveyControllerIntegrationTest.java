@@ -13,14 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.ENTITY_NOT_FOUND;
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(GlobalExceptionHandler.class)
+@ActiveProfiles("test")
 @Transactional
 class SurveyControllerIntegrationTest {
     private final MockMvc mockMvc;
@@ -38,8 +41,6 @@ class SurveyControllerIntegrationTest {
 
     private OwnerResponseDto owner;
     private SurveyResponseDto createdSurvey;
-    @Autowired
-    private PathMappedEndpoints pathMappedEndpoints;
 
     @Autowired
     public SurveyControllerIntegrationTest(MockMvc mockMvc, ObjectMapper objectMapper, SurveyService surveyService, OwnerService ownerService) {
@@ -76,7 +77,7 @@ class SurveyControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/surveys/{id}", 303L))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
                     .andDo(print());
         }
 
@@ -98,7 +99,7 @@ class SurveyControllerIntegrationTest {
         void givenCorrectRequest_whenCreate_shouldReturnCreatedSurvey() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("new survey motherfuckers", "description", owner.id());
             mockMvc.perform(post("/api/v1/surveys")
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.title").value(surveyRequest.title()))
@@ -110,11 +111,11 @@ class SurveyControllerIntegrationTest {
         void givenNotExistentOwnerId_whenCreate_shouldReturnNotFound() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("new survey motherfuckers", "description", 393L);
             mockMvc.perform(post("/api/v1/surveys")
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
                     .andDo(print());
         }
 
@@ -123,11 +124,11 @@ class SurveyControllerIntegrationTest {
         void givenInvalidRequest_whenCreate_shouldReturnBadRequest() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("", "", owner.id());
             mockMvc.perform(post("/api/v1/surveys")
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value("Validation failed"))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
                     .andDo(print());
         }
     }
@@ -139,7 +140,7 @@ class SurveyControllerIntegrationTest {
         void givenInvalidRequest_whenUpdate_shouldReturnBadRequest() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("", "", owner.id());
             mockMvc.perform(put("/api/v1/surveys/{id}", createdSurvey.id())
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400));
@@ -150,7 +151,7 @@ class SurveyControllerIntegrationTest {
         void givenNotExistentOwnerId_whenUpdate_shouldReturnBadRequest() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("valid data", "valid description", 293L);
             mockMvc.perform(put("/api/v1/surveys/{id}", createdSurvey.id())
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404));
@@ -161,7 +162,7 @@ class SurveyControllerIntegrationTest {
         void givenCorrectRequest_whenUpdate_shouldReturnUpdatedSurvey() throws Exception {
             SurveyRequestDto surveyRequest = new SurveyRequestDto("valid data", "valid description", owner.id());
             mockMvc.perform(put("/api/v1/surveys/{id}", createdSurvey.id())
-                            .contentType("application/json")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
                     .andExpect(status().isOk());
         }
