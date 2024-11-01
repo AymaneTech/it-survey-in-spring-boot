@@ -30,6 +30,9 @@ public class DefaultChapterService implements ChapterService {
 
     @Override
     public List<ChapterResponseDto> findAllBySurveyEditionId(SurveyEditionId id) {
+        if (!surveyEditionRepository.existsById(id))
+            throw new EntityNotFoundException("survey edition", id.value());
+
         return repository.findAllBySurveyEditionId(id)
                 .stream().map(mapper::toChapterResponse)
                 .toList();
@@ -49,7 +52,7 @@ public class DefaultChapterService implements ChapterService {
 
         if (repository.existsByTitleAndSurveyEditionId(dto.title(), id))
             throw new EntityCreationException("Failed to save the chapter because chapter name already used in this survey edition",
-                    List.of("title ("+ dto.title() + ") already exists in chapter of id " + id.value()));
+                    List.of("title (" + dto.title() + ") already exists in chapter of id " + id.value()));
 
         Chapter chapter = mapper.toEntity(dto)
                 .setSurveyEdition(surveyEdition);
