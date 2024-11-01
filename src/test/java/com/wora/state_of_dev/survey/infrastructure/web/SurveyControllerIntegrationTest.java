@@ -9,6 +9,7 @@ import com.wora.state_of_dev.survey.application.dto.request.SurveyRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.SurveyResponseDto;
 import com.wora.state_of_dev.survey.application.service.SurveyService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(GlobalExceptionHandler.class)
 @ActiveProfiles("test")
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class SurveyControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -41,14 +43,6 @@ class SurveyControllerIntegrationTest {
 
     private OwnerResponseDto owner;
     private SurveyResponseDto createdSurvey;
-
-    @Autowired
-    public SurveyControllerIntegrationTest(MockMvc mockMvc, ObjectMapper objectMapper, SurveyService surveyService, OwnerService ownerService) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
-        this.surveyService = surveyService;
-        this.ownerService = ownerService;
-    }
 
     @BeforeEach
     void setUp() {

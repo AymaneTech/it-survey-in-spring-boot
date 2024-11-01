@@ -12,8 +12,8 @@ import com.wora.state_of_dev.survey.application.dto.response.SurveyResponseDto;
 import com.wora.state_of_dev.survey.application.service.SurveyEditionService;
 import com.wora.state_of_dev.survey.application.service.SurveyService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(GlobalExceptionHandler.class)
 @ActiveProfiles("test")
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class SurveyEditionControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -51,15 +52,6 @@ class SurveyEditionControllerIntegrationTest {
     private SurveyEditionRequestDto surveyEditionRequestDto;
     private SurveyEditionResponseDto editionDto;
     private SurveyResponseDto surveyResponseDto;
-
-    @Autowired
-    public SurveyEditionControllerIntegrationTest(MockMvc mockMvc, SurveyEditionService surveyEditionService, ObjectMapper objectMapper, SurveyService surveyService, OwnerService ownerService) {
-        this.mockMvc = mockMvc;
-        this.surveyEditionService = surveyEditionService;
-        this.objectMapper = objectMapper;
-        this.surveyService = surveyService;
-        this.ownerService = ownerService;
-    }
 
     @BeforeEach
     void setup() {

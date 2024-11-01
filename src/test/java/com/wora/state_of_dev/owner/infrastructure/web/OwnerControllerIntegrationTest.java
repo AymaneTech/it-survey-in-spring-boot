@@ -6,6 +6,7 @@ import com.wora.state_of_dev.owner.application.dto.OwnerRequestDto;
 import com.wora.state_of_dev.owner.application.dto.OwnerResponseDto;
 import com.wora.state_of_dev.owner.application.service.OwnerService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,19 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(GlobalExceptionHandler.class)
 @ActiveProfiles("test")
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class OwnerControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final OwnerService ownerService;
 
     private OwnerResponseDto createdOwner;
-
-    @Autowired
-    public OwnerControllerIntegrationTest(MockMvc mockMvc, ObjectMapper objectMapper, OwnerService ownerService) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
-        this.ownerService = ownerService;
-    }
 
     @BeforeEach
     void setUp() {
