@@ -23,7 +23,7 @@ public class Answer {
     private String text;
 
     @Column(name = "select_count")
-    private Integer selectCount;
+    private int selectCount;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
