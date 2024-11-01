@@ -23,9 +23,7 @@ import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHan
 import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -54,8 +52,7 @@ class OwnerControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(createdOwner.id()))
-                .andExpect(jsonPath("$[0].name").value(createdOwner.name()))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].name").value(createdOwner.name()));
     }
 
     @Nested
@@ -67,17 +64,14 @@ class OwnerControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/owners/{id}", id))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
         @Rollback
         void givenOwnerIdExists_whenFindById_shouldReturnFoundOwner() throws Exception {
             mockMvc.perform(get("/api/v1/owners/{id}", createdOwner.id()))
-                    .andExpect(status().isOk())
-                    .andDo(print());
+                    .andExpect(status().isOk());
         }
     }
 
@@ -92,8 +86,7 @@ class OwnerControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(newOwner)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.name").value(newOwner.name()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.name").value(newOwner.name()));
         }
 
         @Test
@@ -106,8 +99,7 @@ class OwnerControllerIntegrationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
                     .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
-                    .andExpect(jsonPath("$.errors.name").value("must not be blank"))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.errors.name").value("must not be blank"));
         }
     }
 
@@ -123,8 +115,7 @@ class OwnerControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value(updateRequest.name()))
-                    .andExpect(jsonPath("$.id").value(createdOwner.id()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.id").value(createdOwner.id()));
         }
 
         @Test
@@ -137,8 +128,7 @@ class OwnerControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
@@ -151,8 +141,7 @@ class OwnerControllerIntegrationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
                     .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
-                    .andExpect(jsonPath("$.errors.name").value("must not be blank"))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.errors.name").value("must not be blank"));
         }
     }
 
@@ -164,16 +153,14 @@ class OwnerControllerIntegrationTest {
         void givenExistentId_whenDelete_shouldDeleteOwnerAndReturnNoContent() throws Exception {
             System.out.println(ownerService.findAll());
             mockMvc.perform(delete("/api/v1/owners/{id}", createdOwner.id()))
-                    .andExpect(status().isNoContent())
-                    .andDo(print());
+                    .andExpect(status().isNoContent());
         }
 
         @Test
         @Rollback
         void givenNoExistentId_whenDelete_shouldReturnNotFound() throws Exception {
             mockMvc.perform(delete("/api/v1/owners/{id}", 30303L))
-                    .andExpect(status().isNotFound())
-                    .andDo(print());
+                    .andExpect(status().isNotFound());
         }
     }
 }

@@ -32,7 +32,6 @@ import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHan
 import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +48,6 @@ class SurveyEditionControllerIntegrationTest {
     private final SurveyService surveyService;
     private final OwnerService ownerService;
 
-    private SurveyEditionRequestDto surveyEditionRequestDto;
     private SurveyEditionResponseDto editionDto;
     private SurveyResponseDto surveyResponseDto;
 
@@ -57,7 +55,7 @@ class SurveyEditionControllerIntegrationTest {
     void setup() {
         OwnerResponseDto owner = ownerService.create(new OwnerRequestDto("aymane the bosss"));
         surveyResponseDto = surveyService.create(new SurveyRequestDto("state of motherfuckers", "state of motherfuckers in morocco", owner.id()));
-        surveyEditionRequestDto = new SurveyEditionRequestDto(LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(40), Year.now(), surveyResponseDto.id());
+        SurveyEditionRequestDto surveyEditionRequestDto = new SurveyEditionRequestDto(LocalDateTime.now().plusDays(2), LocalDateTime.now().plusDays(40), Year.now(), surveyResponseDto.id());
         editionDto = surveyEditionService.create(surveyEditionRequestDto);
     }
 
@@ -67,8 +65,7 @@ class SurveyEditionControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/survey-editions"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$.[0].id").value(editionDto.id()))
-                .andDo(print());
+                .andExpect(jsonPath("$.[0].id").value(editionDto.id()));
     }
 
     @Nested
@@ -78,8 +75,7 @@ class SurveyEditionControllerIntegrationTest {
         void givenSurveyEditionIdExists_whenFindById_shouldReturnFoundSurveyEdition() throws Exception {
             mockMvc.perform(get("/api/v1/survey-editions/{id}", editionDto.id()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(editionDto.id()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.id").value(editionDto.id()));
         }
 
         @Test
@@ -87,9 +83,7 @@ class SurveyEditionControllerIntegrationTest {
         void givenSurveyEditionDoesNotExists_whenFindById_shouldReturnNotFound() throws Exception {
             mockMvc.perform(get("/api/v1/survey-editions/{id}", 939L))
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404))
-
-                    .andDo(print());
+                    .andExpect(jsonPath("$.code").value(404));
         }
     }
 
@@ -105,8 +99,7 @@ class SurveyEditionControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED));
         }
 
         @Test
@@ -119,8 +112,7 @@ class SurveyEditionControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
@@ -132,8 +124,7 @@ class SurveyEditionControllerIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.survey.id").value(surveyResponseDto.id()))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.survey.id").value(surveyResponseDto.id()));
         }
     }
 
@@ -149,8 +140,7 @@ class SurveyEditionControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED));
         }
 
         @Test
@@ -163,8 +153,7 @@ class SurveyEditionControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(validRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
-                    .andDo(print());
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
         }
 
         @Test
@@ -175,8 +164,7 @@ class SurveyEditionControllerIntegrationTest {
             mockMvc.perform(put("/api/v1/survey-editions/{id}", editionDto.id())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(validRequest)))
-                    .andExpect(status().isOk())
-                    .andDo(print());
+                    .andExpect(status().isOk());
         }
     }
 
