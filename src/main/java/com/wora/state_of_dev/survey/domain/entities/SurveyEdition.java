@@ -3,6 +3,8 @@ package com.wora.state_of_dev.survey.domain.entities;
 import com.wora.state_of_dev.common.domain.valueObject.Timestamp;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +31,15 @@ public class SurveyEdition {
     private SurveyEditionId id;
 
     @NotNull
+    @FutureOrPresent
     private LocalDateTime startDate;
 
     @NotNull
+    @Future
     private LocalDateTime endDate;
 
     @NotNull
+    @FutureOrPresent
     private Year year;
 
     @ManyToOne
