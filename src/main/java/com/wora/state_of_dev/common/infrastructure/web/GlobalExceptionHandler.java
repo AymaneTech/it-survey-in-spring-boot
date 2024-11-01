@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse entityNotFoundException(final EntityNotFoundException ex, WebRequest request) {
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now(),
                 "resource you are looking for not found",
                 request.getDescription(false),
@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse runtime(RuntimeException e, WebRequest request) {
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now(),
                 "this exception not specified, caught just by global exception",
                 request.getDescription(false),
