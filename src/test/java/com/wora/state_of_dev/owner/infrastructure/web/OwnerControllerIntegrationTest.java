@@ -67,7 +67,7 @@ class OwnerControllerIntegrationTest {
             Long id = 1000L;
             mockMvc.perform(get("/api/v1/owners/{id}", id))
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.code").value(404))
                     .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
 
                     .andDo(print());
@@ -137,7 +137,7 @@ class OwnerControllerIntegrationTest {
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.code").value(404))
                     .andExpect(jsonPath("$.message").value("resource you are looking for not found"))
                     .andDo(print());
         }
