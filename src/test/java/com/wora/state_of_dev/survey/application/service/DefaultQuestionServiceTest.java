@@ -12,6 +12,7 @@ import com.wora.state_of_dev.survey.application.service.impl.DefaultQuestionServ
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Chapter;
 import com.wora.state_of_dev.survey.domain.entities.Question;
+import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
 import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.AnswerType;
@@ -159,6 +160,16 @@ class DefaultQuestionServiceTest {
                     .isThrownBy(() -> sut.create(dto))
                     .withMessageContaining("chapter with id 2 not found");
         }
+
+        @Test
+        void givenChapterHasSubChapters_whenCreate_shouldThrowChapterHasSubChaptersException() {
+            given(chapterRepository.findById(new ChapterId(2L))).willReturn(Optional.of(chapter));
+            given(chapterRepository.isHasSubChapters(any(ChapterId.class))).willReturn(true);
+
+            assertThatExceptionOfType(ChapterHasSubChaptersException.class)
+                    .isThrownBy(() -> sut.create(dto))
+                    .withMessageContaining("Cannot create question with chapter that has sub chapters");
+        }
     }
 
     @Nested
@@ -194,6 +205,16 @@ class DefaultQuestionServiceTest {
             assertThat(actual).isNotNull();
             assertThat(actual.text()).isEqualTo("what is the stack");
             verify(repository).findById(any(QuestionId.class));
+        }
+
+        @Test
+        void givenChapterHasSubChapters_whenUpdate_shouldThrowChapterHasSubChaptersException() {
+            given(repository.findById(any(QuestionId.class))).willReturn(Optional.of(question));
+            given(chapterRepository.isHasSubChapters(any(ChapterId.class))).willReturn(true);
+
+            assertThatExceptionOfType(ChapterHasSubChaptersException.class)
+                    .isThrownBy(() -> sut.update(new QuestionId(3L), dto))
+                    .withMessageContaining("Cannot create question with chapter that has sub chapters");
         }
     }
 
