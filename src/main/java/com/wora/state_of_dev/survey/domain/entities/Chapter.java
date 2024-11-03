@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,9 @@ public class Chapter {
     @JoinColumn(name = "parent_chapter_id")
     private Chapter parentChapter;
 
+    @OneToMany(mappedBy = "parentChapter")
+    private List<Chapter> subChapters = new ArrayList<>();
+
     @OneToMany(mappedBy = "chapter", fetch = FetchType.EAGER)
     private List<Question> questions;
 
@@ -44,10 +48,10 @@ public class Chapter {
     }
 
     public boolean isSurveyEditionParent() {
-        return surveyEdition != null && parentChapter == null;
+        return parentChapter == null;
     }
 
     public boolean isSubChapter() {
-        return parentChapter != null && surveyEdition == null;
+        return parentChapter != null;
     }
 }

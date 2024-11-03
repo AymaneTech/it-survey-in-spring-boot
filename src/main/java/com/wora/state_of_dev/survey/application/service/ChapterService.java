@@ -12,7 +12,7 @@ public interface ChapterService {
 
     ChapterResponseDto findById(ChapterId id);
 
-    ChapterResponseDto create(SurveyEditionId id, ChapterRequestDto dto);
+    ChapterResponseDto create(ChapterRequestDto dto);
 
     ChapterResponseDto update(ChapterId id, ChapterRequestDto dto);
 

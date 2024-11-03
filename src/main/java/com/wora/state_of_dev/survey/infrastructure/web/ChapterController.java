@@ -19,9 +19,9 @@ import java.util.List;
 class ChapterController {
     private final ChapterService service;
 
-    @PostMapping("/survey-editions/{id}/chapters")
-    public ResponseEntity<ChapterResponseDto> create(@PathVariable Long id, @RequestBody @Valid ChapterRequestDto dto) {
-        ChapterResponseDto chapter = service.create(new SurveyEditionId(id), dto);
+    @PostMapping("/chapters")
+    public ResponseEntity<ChapterResponseDto> create(@RequestBody @Valid ChapterRequestDto dto) {
+        ChapterResponseDto chapter = service.create(dto);
         return new ResponseEntity<>(chapter, HttpStatus.CREATED);
     }
 

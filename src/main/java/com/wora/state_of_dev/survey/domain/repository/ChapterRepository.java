@@ -18,4 +18,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, ChapterId> {
 
     @Query("SELECT c FROM Chapter c WHERE c.parentChapter.id = :id")
     List<ChapterResponseDto> findByParentChapterId(ChapterId id);
+
+    @Query("SELECT COUNT(c) > 0 FROM Chapter c WHERE c.parentChapter.id = :chapterId")
+    boolean isHasSubChapters(ChapterId chapterId);
 }

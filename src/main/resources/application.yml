@@ -1,6 +1,6 @@
 spring:
   application:
-    name: State of dev
+    name: It Survey
   datasource:
     url: jdbc:postgresql://localhost:5432/it_survey
     username: postgres

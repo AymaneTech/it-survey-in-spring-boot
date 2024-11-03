@@ -3,6 +3,7 @@ package com.wora.state_of_dev.common.infrastructure.web;
 import com.wora.state_of_dev.common.domain.ErrorResponse;
 import com.wora.state_of_dev.common.domain.exception.EntityCreationException;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
+import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -95,6 +96,18 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now(),
                 "this exception not specified, caught just by global exception",
+                request.getDescription(false),
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(ChapterHasSubChaptersException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse chapterHasSubChapters(ChapterHasSubChaptersException e, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                "conflict in question information",
                 request.getDescription(false),
                 e.getMessage()
         );
