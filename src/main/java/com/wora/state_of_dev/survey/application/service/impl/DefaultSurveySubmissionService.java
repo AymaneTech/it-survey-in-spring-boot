@@ -55,15 +55,15 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
         if (!Objects.equals(surveyEditionId.value(), question.getChapter().getSurveyEdition().getId().value()))
             throw new QuestionNotBelongToSurveyEdition("the question with ID: " + question.getId().value() + " does not belong to survey of id " + surveyEditionId.value());
 
-        question.incrementAnswerCount();
         processAnswer(dto.answer(), question);
+        question.incrementAnswerCount();
     }
 
     private void validateParticipationDateIsBetweenSurveyEditionStartAndEndDate() {
         SurveyEdition surveyEdition = surveyEditionRepository.findById(surveyEditionId)
                 .orElseThrow(() -> new EntityNotFoundException("survey edition", surveyEditionId.value()));
         if (!DateValidator.isDateBetween(LocalDateTime.now(), surveyEdition.getStartDate(), surveyEdition.getEndDate())) {
-            throw new SurveyEditionNotOpenedNow("you are trying to participated in a closed survey edition");
+            throw new SurveyEditionNotOpenedNow("you are trying to participate in a closed survey edition");
         }
     }
 

@@ -59,7 +59,6 @@ public class DefaultChapterService implements ChapterService {
                 .setSurveyEdition(surveyEdition);
 
         if (dto.parentChapterId() != null) {
-            // todo: write unit & integration test for this new case
             Chapter parentChapter = repository.findById(new ChapterId(dto.parentChapterId()))
                     .orElseThrow(() -> new EntityNotFoundException("chapter", dto.parentChapterId()));
             chapter.setParentChapter(parentChapter);

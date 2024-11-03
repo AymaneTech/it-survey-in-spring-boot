@@ -176,6 +176,35 @@ class DefaultChapterServiceTest {
         }
 
         @Test
+        void givenValidRequestAndValidParentChapter_whenCreate_shouldCreateAndReturnChapter() {
+            ChapterRequestDto requestDto = new ChapterRequestDto("Most used frameworks", surveyEdition.getId().value(), 2L);
+
+            given(surveyEditionRepository.findById(any(SurveyEditionId.class))).willReturn(Optional.of(surveyEdition));
+            given(repository.existsByTitleAndSurveyEditionId(eq(requestDto.title()), any(SurveyEditionId.class))).willReturn(false);
+            given(mapper.toEntity(eq(requestDto))).willReturn(chapter);
+            given(repository.findById(any(ChapterId.class))).willReturn(Optional.of(new Chapter("here here")));
+            given(repository.save(any(Chapter.class))).willReturn(chapter);
+            given(mapper.toChapterResponse(any(Chapter.class)))
+                    .willAnswer(invocation -> {
+                        Chapter arg = invocation.getArgument(0);
+                        SurveyEditionEmbeddableDto surveyEditionDto = new SurveyEditionEmbeddableDto(
+                                arg.getSurveyEdition().getId().value(),
+                                arg.getSurveyEdition().getStartDate(),
+                                arg.getSurveyEdition().getEndDate(),
+                                arg.getSurveyEdition().getYear(), null
+                        );
+                        return new ChapterResponseDto(arg.getId().value(), arg.getTitle(), surveyEditionDto);
+                    });
+
+            ChapterResponseDto actual = sut.create(requestDto);
+
+            assertThat(actual).isNotNull();
+            assertThat(actual.title()).isEqualTo(requestDto.title());
+            verify(surveyEditionRepository).findById(any(SurveyEditionId.class));
+            verify(repository).save(any(Chapter.class));
+        }
+
+        @Test
         void given_surveyEditionDoesNotExist_whenCreate_shouldThrowEntityNotFoundException() {
             ChapterRequestDto requestDto = new ChapterRequestDto("New Chapter", 5L, null);
 
@@ -196,6 +225,20 @@ class DefaultChapterServiceTest {
             assertThatExceptionOfType(EntityCreationException.class)
                     .isThrownBy(() -> sut.create(requestDto))
                     .withMessageContaining("Failed to save the chapter because chapter name already used in this survey edition");
+        }
+
+        @Test
+        void given_ParentChapterDoesNotExists_whenCreate_shouldThrowEntityNotFound() {
+            ChapterRequestDto requestDto = new ChapterRequestDto("Existing Chapter", surveyEdition.getId().value(), 5L);
+
+            given(surveyEditionRepository.findById(any(SurveyEditionId.class))).willReturn(Optional.of(surveyEdition));
+            given(repository.existsByTitleAndSurveyEditionId(eq(requestDto.title()), any(SurveyEditionId.class))).willReturn(false);
+            given(mapper.toEntity(eq(requestDto))).willReturn(chapter);
+            given(repository.findById(any(ChapterId.class))).willReturn(Optional.empty());
+
+            assertThatExceptionOfType(EntityNotFoundException.class)
+                    .isThrownBy(() -> sut.create(requestDto))
+                    .withMessageContaining("chapter with id 5 not found");
         }
     }
 
