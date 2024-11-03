@@ -4,6 +4,7 @@ import com.wora.state_of_dev.survey.application.dto.request.ListOfQuestionSubmis
 import com.wora.state_of_dev.survey.application.dto.request.SingleQuestionSubmissionRequestDto;
 import com.wora.state_of_dev.survey.application.dto.request.SurveySubmission;
 import com.wora.state_of_dev.survey.application.service.SurveySubmissionService;
+import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,11 @@ public class SurveySubmissionController {
 
     @PostMapping
     public ResponseEntity<Void> participate(@PathVariable Long id, @RequestBody @Valid SurveySubmission dto) {
+        SurveyEditionId surveyEditionId = new SurveyEditionId(id);
         if (dto instanceof SingleQuestionSubmissionRequestDto singleSubmission) {
-            service.submit(singleSubmission);
+            service.submit(surveyEditionId, singleSubmission);
         } else if (dto instanceof ListOfQuestionSubmissionRequestDto listSubmissions) {
-            service.submit(listSubmissions);
+            service.submit(surveyEditionId, listSubmissions);
         }
         return ResponseEntity.noContent().build();
     }
