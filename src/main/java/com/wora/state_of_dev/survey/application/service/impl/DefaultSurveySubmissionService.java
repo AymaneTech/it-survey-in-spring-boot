@@ -32,6 +32,12 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
         processAnswer(dto.answer());
     }
 
+    @Override
+    public void submit(ListOfQuestionSubmissionRequestDto dto) {
+        dto.submissions()
+                .forEach(this::submit);
+    }
+
     private Question findQuestionById(Long questionId) {
         return questionRepository.findById(new QuestionId(questionId))
                 .orElseThrow(() -> new EntityNotFoundException("question", questionId));
@@ -60,10 +66,5 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
                 .toList();
         List<Answer> answers = answerRepository.findAllById(answerIds);
         answers.forEach(Answer::incrementSelectCount);
-    }
-
-    @Override
-    public void submit(ListOfQuestionSubmissionRequestDto dto) {
-
     }
 }
