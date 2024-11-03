@@ -4,6 +4,9 @@ import com.wora.state_of_dev.common.domain.ErrorResponse;
 import com.wora.state_of_dev.common.domain.exception.EntityCreationException;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
+import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
+import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
+import com.wora.state_of_dev.survey.domain.exception.SurveyEditionNotOpenedNow;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -102,12 +105,48 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ChapterHasSubChaptersException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse chapterHasSubChapters(ChapterHasSubChaptersException e, WebRequest request) {
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now(),
                 "conflict in question information",
+                request.getDescription(false),
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(GivenAnswerNotBelongToQuestion.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse givenAnswerNotBelongToQuestion(GivenAnswerNotBelongToQuestion e, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now(),
+                "the given answer is a not related to the given question",
+                request.getDescription(false),
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(QuestionNotBelongToSurveyEdition.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse questionNotBelongToSurveyEdition(QuestionNotBelongToSurveyEdition e, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now(),
+                "given question not belong to the given survey edition",
+                request.getDescription(false),
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(SurveyEditionNotOpenedNow.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse surveyEditionNotOpenedNow(SurveyEditionNotOpenedNow e, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                LocalDateTime.now(),
+                "survey edition not opened now",
                 request.getDescription(false),
                 e.getMessage()
         );

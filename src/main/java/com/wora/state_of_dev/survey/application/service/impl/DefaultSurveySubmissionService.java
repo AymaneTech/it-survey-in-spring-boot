@@ -9,7 +9,7 @@ import com.wora.state_of_dev.survey.domain.entities.Question;
 import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
 import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
-import com.wora.state_of_dev.survey.domain.exception.SurveyIsClosed;
+import com.wora.state_of_dev.survey.domain.exception.SurveyEditionNotOpenedNow;
 import com.wora.state_of_dev.survey.domain.repository.AnswerRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;
 import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;
@@ -63,7 +63,7 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
         SurveyEdition surveyEdition = surveyEditionRepository.findById(surveyEditionId)
                 .orElseThrow(() -> new EntityNotFoundException("survey edition", surveyEditionId.value()));
         if (!DateValidator.isDateBetween(LocalDateTime.now(), surveyEdition.getStartDate(), surveyEdition.getEndDate())) {
-            throw new SurveyIsClosed("you are trying to participated in a closed survey edition");
+            throw new SurveyEditionNotOpenedNow("you are trying to participated in a closed survey edition");
         }
     }
 
