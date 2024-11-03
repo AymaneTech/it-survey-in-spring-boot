@@ -1,14 +1,18 @@
 package com.wora.state_of_dev.survey.application.service.impl;
 
+import com.wora.state_of_dev.common.application.validation.DateValidator;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.survey.application.dto.request.*;
 import com.wora.state_of_dev.survey.application.service.SurveySubmissionService;
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Question;
+import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
 import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
+import com.wora.state_of_dev.survey.domain.exception.SurveyIsClosed;
 import com.wora.state_of_dev.survey.domain.repository.AnswerRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;
+import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.AnswerId;
 import com.wora.state_of_dev.survey.domain.valueObject.AnswerType;
 import com.wora.state_of_dev.survey.domain.valueObject.QuestionId;
@@ -17,6 +21,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +31,7 @@ import java.util.Objects;
 public class DefaultSurveySubmissionService implements SurveySubmissionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final SurveyEditionRepository surveyEditionRepository;
 
     private SurveyEditionId surveyEditionId;
 
@@ -43,12 +49,22 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
     }
 
     private void handleSubmission(SingleQuestionSubmissionRequestDto dto) {
+        validateParticipationDateIsBetweenSurveyEditionStartAndEndDate();
+
         Question question = findQuestionById(dto.questionId());
         if (!Objects.equals(surveyEditionId.value(), question.getChapter().getSurveyEdition().getId().value()))
             throw new QuestionNotBelongToSurveyEdition("the question with ID: " + question.getId().value() + " does not belong to survey of id " + surveyEditionId.value());
 
         question.incrementAnswerCount();
         processAnswer(dto.answer(), question);
+    }
+
+    private void validateParticipationDateIsBetweenSurveyEditionStartAndEndDate() {
+        SurveyEdition surveyEdition = surveyEditionRepository.findById(surveyEditionId)
+                .orElseThrow(() -> new EntityNotFoundException("survey edition", surveyEditionId.value()));
+        if (!DateValidator.isDateBetween(LocalDateTime.now(), surveyEdition.getStartDate(), surveyEdition.getEndDate())) {
+            throw new SurveyIsClosed("you are trying to participated in a closed survey edition");
+        }
     }
 
     private Question findQuestionById(Long questionId) {
