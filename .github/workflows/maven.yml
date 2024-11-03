@@ -36,10 +36,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Install maven dependecies
-        run: mvn install
-      - name: Run tests
-        run: mvn --batch-mode --update-snapshots verify
+      - name: Run mvn install (without running tests)
+        run: mvn install -DskipTests
 
       - name: Build docker image
         run: docker build -t it-survey-api:latest .
@@ -50,12 +48,13 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/it-survey
           SPRING_DATASOURCE_USERNAME: user
           SPRING_DATASOURCE_PASSWORD: password
+
       - name: Wait for database to be ready (like waiting for women to do makeup)
         run: |
           timeout 30s bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
         continue-on-error: true
 
-      - name: Run integration test
+      - name: Run integration test (mvn verify)
         run: mvn verify
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/it-survey
