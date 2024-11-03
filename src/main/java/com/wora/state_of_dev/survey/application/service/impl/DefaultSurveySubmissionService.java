@@ -44,9 +44,6 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
 
     private void handleSubmission(SingleQuestionSubmissionRequestDto dto) {
         Question question = findQuestionById(dto.questionId());
-        System.out.println("---------------------------------------");
-        System.out.println("survey edition " + surveyEditionId);
-        System.out.println("survey edition of question " + question.getChapter().getSurveyEdition().getId());
         if (!Objects.equals(surveyEditionId.value(), question.getChapter().getSurveyEdition().getId().value()))
             throw new QuestionNotBelongToSurveyEdition("the question with ID: " + question.getId().value() + " does not belong to survey of id " + surveyEditionId.value());
 
