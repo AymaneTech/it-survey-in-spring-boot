@@ -2,6 +2,6 @@
 
 ### Todo 
 - [ ] create new endpoint to return result of a survey by survey edition id 
-- [ ] write unit & integration tests for new features  
+- [ ] write integration tests for question and survey submission controllers 
 - [ ] add validation @Annotation
 - [ ] integrate Redis
