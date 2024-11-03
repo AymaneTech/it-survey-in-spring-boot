@@ -11,7 +11,6 @@ import com.wora.state_of_dev.survey.application.dto.response.SurveyEditionRespon
 import com.wora.state_of_dev.survey.application.service.ChapterService;
 import com.wora.state_of_dev.survey.application.service.SurveyEditionService;
 import com.wora.state_of_dev.survey.application.service.SurveyService;
-import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +31,7 @@ import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHan
 import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,7 +61,7 @@ class ChapterControllerIntegrationTest {
                 Year.now(),
                 surveyId)
         );
-        chapter = chapterService.create(new SurveyEditionId(surveyEdition.id()), new ChapterRequestDto("web developement"));
+        chapter = chapterService.create(new ChapterRequestDto("web developement", surveyEdition.id(), null));
     }
 
     @Nested
@@ -69,8 +69,8 @@ class ChapterControllerIntegrationTest {
         @Test
         @Rollback
         void givenCorrectRequestAndExistentSurveyEditionId_whenCreate_shouldCreateAndReturnChapter() throws Exception {
-            ChapterRequestDto request = new ChapterRequestDto("web dev chapter");
-            mockMvc.perform(post("/api/v1//survey-editions/{id}/chapters", surveyEdition.id())
+            ChapterRequestDto request = new ChapterRequestDto("web dev chapter", surveyEdition.id(), null);
+            mockMvc.perform(post("/api/v1/chapters")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -80,21 +80,22 @@ class ChapterControllerIntegrationTest {
         @Test
         @Rollback
         void givenCorrectRequestAndInvalidSurveyEditionId_whenCreate_shouldReturnNotFound() throws Exception {
-            ChapterRequestDto request = new ChapterRequestDto("web dev chapter");
-            mockMvc.perform(post("/api/v1//survey-editions/{id}/chapters", 383838L)
+            ChapterRequestDto request = new ChapterRequestDto("web dev chapter", 293939L, null);
+            mockMvc.perform(post("/api/v1/chapters" )
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
+                    .andDo(print());
         }
 
         @Test
         @Rollback
         void givenInvalidRequsetAndCorrectId_whenCreate_shouldReturnBadRequest() throws Exception {
-            ChapterRequestDto request = new ChapterRequestDto(""); // this is invalid request
+            ChapterRequestDto request = new ChapterRequestDto("", null, null); // this is invalid request
 
-            mockMvc.perform(post("/api/v1/survey-editions/{id}/chapters", surveyEdition.id())
+            mockMvc.perform(post("/api/v1/chapters", surveyEdition.id())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -146,8 +147,8 @@ class ChapterControllerIntegrationTest {
     class UpdateTests {
         @Test
         @Rollback
-        void givenExistentIdAndCorrectRequest_whenUpdate_shouldReturnUpdateChapter() throws Exception{
-            ChapterRequestDto request = new ChapterRequestDto("udpate shit");
+        void givenExistentIdAndCorrectRequest_whenUpdate_shouldReturnUpdateChapter() throws Exception {
+            ChapterRequestDto request = new ChapterRequestDto("udpate shit", surveyEdition.id(), null);
 
             mockMvc.perform(put("/api/v1/chapters/{id}", chapter.id())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)

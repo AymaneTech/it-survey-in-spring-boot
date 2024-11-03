@@ -13,7 +13,10 @@ import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -146,7 +149,7 @@ class DefaultChapterServiceTest {
     class CreateTests {
         @Test
         void given_validRequest_whenCreate_shouldCreateAndReturnChapter() {
-            ChapterRequestDto requestDto = new ChapterRequestDto("Most used frameworks");
+            ChapterRequestDto requestDto = new ChapterRequestDto("Most used frameworks", surveyEdition.getId().value(), null);
 
             given(surveyEditionRepository.findById(any(SurveyEditionId.class))).willReturn(Optional.of(surveyEdition));
             given(repository.existsByTitleAndSurveyEditionId(eq(requestDto.title()), any(SurveyEditionId.class))).willReturn(false);
@@ -164,7 +167,7 @@ class DefaultChapterServiceTest {
                         return new ChapterResponseDto(arg.getId().value(), arg.getTitle(), surveyEditionDto);
                     });
 
-            ChapterResponseDto actual = sut.create(new SurveyEditionId(5L), requestDto);
+            ChapterResponseDto actual = sut.create(requestDto);
 
             assertThat(actual).isNotNull();
             assertThat(actual.title()).isEqualTo(requestDto.title());
@@ -174,24 +177,24 @@ class DefaultChapterServiceTest {
 
         @Test
         void given_surveyEditionDoesNotExist_whenCreate_shouldThrowEntityNotFoundException() {
-            ChapterRequestDto requestDto = new ChapterRequestDto("New Chapter");
+            ChapterRequestDto requestDto = new ChapterRequestDto("New Chapter", 5L, null);
 
             given(surveyEditionRepository.findById(any(SurveyEditionId.class))).willReturn(Optional.empty());
 
             assertThatExceptionOfType(EntityNotFoundException.class)
-                    .isThrownBy(() -> sut.create(new SurveyEditionId(5L), requestDto))
+                    .isThrownBy(() -> sut.create(requestDto))
                     .withMessageContaining("survey edition with id 5 not found");
         }
 
         @Test
         void given_duplicateChapterTitle_whenCreate_shouldThrowEntityCreationException() {
-            ChapterRequestDto requestDto = new ChapterRequestDto("Existing Chapter");
+            ChapterRequestDto requestDto = new ChapterRequestDto("Existing Chapter", surveyEdition.getId().value(), null);
 
             given(surveyEditionRepository.findById(any(SurveyEditionId.class))).willReturn(Optional.of(surveyEdition));
             given(repository.existsByTitleAndSurveyEditionId(eq(requestDto.title()), any(SurveyEditionId.class))).willReturn(true);
 
             assertThatExceptionOfType(EntityCreationException.class)
-                    .isThrownBy(() -> sut.create(new SurveyEditionId(5L), requestDto))
+                    .isThrownBy(() -> sut.create(requestDto))
                     .withMessageContaining("Failed to save the chapter because chapter name already used in this survey edition");
         }
     }
@@ -200,7 +203,7 @@ class DefaultChapterServiceTest {
     class UpdateTests {
         @Test
         void given_chapterExists_whenUpdate_shouldUpdateAndReturnChapter() {
-            ChapterRequestDto requestDto = new ChapterRequestDto("Updated Chapter Title");
+            ChapterRequestDto requestDto = new ChapterRequestDto("Updated Chapter Title", surveyEdition.getId().value(), null);
 
             given(repository.findById(any(ChapterId.class))).willReturn(Optional.of(chapter));
             given(mapper.toChapterResponse(any(Chapter.class)))
@@ -224,7 +227,7 @@ class DefaultChapterServiceTest {
 
         @Test
         void given_chapterDoesNotExist_whenUpdate_shouldThrowEntityNotFoundException() {
-            ChapterRequestDto requestDto = new ChapterRequestDto("Updated Chapter Title");
+            ChapterRequestDto requestDto = new ChapterRequestDto("Updated Chapter Title", surveyEdition.getId().value(), null);
 
             given(repository.findById(any(ChapterId.class))).willReturn(Optional.empty());
 

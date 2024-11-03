@@ -46,16 +46,25 @@ public class DefaultChapterService implements ChapterService {
     }
 
     @Override
-    public ChapterResponseDto create(SurveyEditionId id, ChapterRequestDto dto) {
-        SurveyEdition surveyEdition = surveyEditionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("survey edition", id.value()));
+    public ChapterResponseDto create(ChapterRequestDto dto) {
+        final SurveyEditionId surveyEditionId = new SurveyEditionId(dto.surveyEditionId());
+        SurveyEdition surveyEdition = surveyEditionRepository.findById(surveyEditionId)
+                .orElseThrow(() -> new EntityNotFoundException("survey edition", dto.surveyEditionId()));
 
-        if (repository.existsByTitleAndSurveyEditionId(dto.title(), id))
+        if (repository.existsByTitleAndSurveyEditionId(dto.title(), surveyEditionId))
             throw new EntityCreationException("Failed to save the chapter because chapter name already used in this survey edition",
-                    List.of("title (" + dto.title() + ") already exists in chapter of id " + id.value()));
+                    List.of("title (" + dto.title() + ") already exists in chapter of id " + dto.surveyEditionId()));
 
         Chapter chapter = mapper.toEntity(dto)
                 .setSurveyEdition(surveyEdition);
+
+        if (dto.parentChapterId() != null) {
+            // todo: write unit & integration test for this new case
+            Chapter parentChapter = repository.findById(new ChapterId(dto.parentChapterId()))
+                    .orElseThrow(() -> new EntityNotFoundException("chapter", dto.parentChapterId()));
+            chapter.setParentChapter(parentChapter);
+        }
+
         Chapter savedChapter = repository.save(chapter);
         return mapper.toChapterResponse(savedChapter);
     }
