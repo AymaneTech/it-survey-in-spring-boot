@@ -10,6 +10,7 @@ import com.wora.state_of_dev.survey.application.service.QuestionService;
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Chapter;
 import com.wora.state_of_dev.survey.domain.entities.Question;
+import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
 import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
@@ -49,8 +50,12 @@ public class DefaultQuestionService implements QuestionService {
 
     @Override
     public QuestionResponseDto create(QuestionRequestDto dto) {
-        Chapter chapter = chapterRepository.findById(new ChapterId(dto.chapterId()))
+        final ChapterId chapterId = new ChapterId(dto.chapterId());
+        Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
+
+        if (chapterRepository.isHasSubChapters(chapterId))
+            throw new ChapterHasSubChaptersException(chapterId);
 
         Question question = mapper.toEntity(dto)
                 .setChapter(chapter)
@@ -62,11 +67,15 @@ public class DefaultQuestionService implements QuestionService {
 
     @Override
     public QuestionResponseDto update(QuestionId id, QuestionRequestDto dto) {
+        final ChapterId chapterId = new ChapterId(dto.chapterId());
         Question question = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("question", id.value()));
-        Chapter chapter = chapterRepository.findById(new ChapterId(dto.chapterId()))
-                .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
 
+        if (chapterRepository.isHasSubChapters(chapterId))
+            throw new ChapterHasSubChaptersException(chapterId);
+
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
         question.setText(dto.text())
                 .setAnswerType(dto.answerType())
                 .setChapter(chapter)
