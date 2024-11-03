@@ -4,5 +4,5 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wora.state_of_dev.survey.application.mapper.QuestionSubmissionDeserializer;
 
 @JsonDeserialize(using = QuestionSubmissionDeserializer.class)
-public interface SurveySubmission {
+public sealed interface SurveySubmission permits ListOfQuestionSubmissionRequestDto, SingleQuestionSubmissionRequestDto{
 }
