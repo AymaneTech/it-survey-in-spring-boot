@@ -50,9 +50,17 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/it-survey
           SPRING_DATASOURCE_USERNAME: user
           SPRING_DATASOURCE_PASSWORD: password
+      - name: Wait for database to be ready (like waiting for women to do makeup)
+        run: |
+          timeout 30s bash -c 'until pg_isready -h localhost -p 5432; do sleep 1; done'
+        continue-on-error: true
 
       - name: Run integration test
-        run: mvn test
+        run: mvn verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/it-survey
+          SPRING_DATASOURCE_USERNAME: user
+          SPRING_DATASOURCE_PASSWORD: password
 
       - name: Shut down docker
         run: docker compose down
