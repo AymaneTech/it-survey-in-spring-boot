@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wora.state_of_dev.survey.application.dto.request.*;
+import com.wora.state_of_dev.survey.application.dto.request.submission.*;
 
 import java.io.IOException;
 import java.util.List;

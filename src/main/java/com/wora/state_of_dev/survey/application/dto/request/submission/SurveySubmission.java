@@ -1,4 +1,4 @@
-package com.wora.state_of_dev.survey.application.dto.request;
+package com.wora.state_of_dev.survey.application.dto.request.submission;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wora.state_of_dev.survey.application.mapper.QuestionSubmissionDeserializer;

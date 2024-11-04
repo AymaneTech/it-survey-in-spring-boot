@@ -1,8 +1,8 @@
 package com.wora.state_of_dev.survey.infrastructure.web;
 
-import com.wora.state_of_dev.survey.application.dto.request.ListOfQuestionSubmissionRequestDto;
-import com.wora.state_of_dev.survey.application.dto.request.SingleQuestionSubmissionRequestDto;
-import com.wora.state_of_dev.survey.application.dto.request.SurveySubmission;
+import com.wora.state_of_dev.survey.application.dto.request.submission.ListOfQuestionSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.SingleQuestionSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.SurveySubmission;
 import com.wora.state_of_dev.survey.application.service.SurveySubmissionService;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.validation.Valid;

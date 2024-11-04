@@ -2,7 +2,7 @@ package com.wora.state_of_dev.survey.application.service.impl;
 
 import com.wora.state_of_dev.common.application.validation.DateValidator;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
-import com.wora.state_of_dev.survey.application.dto.request.*;
+import com.wora.state_of_dev.survey.application.dto.request.submission.*;
 import com.wora.state_of_dev.survey.application.service.SurveySubmissionService;
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Question;

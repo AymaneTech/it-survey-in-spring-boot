@@ -1,10 +1,10 @@
 package com.wora.state_of_dev.survey.application.service;
 
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
-import com.wora.state_of_dev.survey.application.dto.request.ListOfQuestionSubmissionRequestDto;
-import com.wora.state_of_dev.survey.application.dto.request.MultiChoiceSubmissionRequestDto;
-import com.wora.state_of_dev.survey.application.dto.request.SingleChoiceSubmissionRequestDto;
-import com.wora.state_of_dev.survey.application.dto.request.SingleQuestionSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.ListOfQuestionSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.MultiChoiceSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.SingleChoiceSubmissionRequestDto;
+import com.wora.state_of_dev.survey.application.dto.request.submission.SingleQuestionSubmissionRequestDto;
 import com.wora.state_of_dev.survey.application.service.impl.DefaultSurveySubmissionService;
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Chapter;
