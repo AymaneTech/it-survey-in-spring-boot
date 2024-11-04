@@ -10,6 +10,7 @@ import com.wora.state_of_dev.survey.application.service.QuestionService;
 import com.wora.state_of_dev.survey.domain.entities.Answer;
 import com.wora.state_of_dev.survey.domain.entities.Chapter;
 import com.wora.state_of_dev.survey.domain.entities.Question;
+import com.wora.state_of_dev.survey.domain.exception.AnswersCannotBeEmptyException;
 import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
 import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;
@@ -38,7 +39,6 @@ public class DefaultQuestionService implements QuestionService {
                 .stream().map(mapper::toResponseDto)
                 .toList();
     }
-
     // todo : add findByChapterId, findBySurveyEditionId
 
     @Override
@@ -92,6 +92,9 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     private List<Answer> mapAnswersDtoToEntities(List<AnswerRequestDto> answerRequestDtos) {
+        if(answerRequestDtos.isEmpty())
+            throw new AnswersCannotBeEmptyException("Cannot create question without answers");
+
         return answerRequestDtos
                 .stream()
                 .map(answerMapper::toEntity)

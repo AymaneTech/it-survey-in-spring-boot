@@ -3,10 +3,7 @@ package com.wora.state_of_dev.common.infrastructure.web;
 import com.wora.state_of_dev.common.domain.ErrorResponse;
 import com.wora.state_of_dev.common.domain.exception.EntityCreationException;
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
-import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
-import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
-import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
-import com.wora.state_of_dev.survey.domain.exception.SurveyEditionNotOpenedNow;
+import com.wora.state_of_dev.survey.domain.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -23,8 +20,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final String VALIDATION_FAILED = "Validation failed";
-    public static final String ENTITY_NOT_FOUND = "Resource Not Found";
+    public static final String VALIDATION_FAILED_MESSAGE = "Validation failed";
+    public static final String ENTITY_NOT_FOUND_MESSAGE = "Resource Not Found";
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -39,7 +36,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
-                VALIDATION_FAILED,
+                VALIDATION_FAILED_MESSAGE,
                 request.getDescription(false),
                 errors);
     }
@@ -62,7 +59,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now(),
-                ENTITY_NOT_FOUND,
+                ENTITY_NOT_FOUND_MESSAGE,
                 request.getDescription(false),
                 ex.getMessage()
         );
@@ -151,4 +148,17 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
     }
+
+    @ExceptionHandler(AnswersCannotBeEmptyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse answerCannotBeEmpty(AnswersCannotBeEmptyException e, WebRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                "cannot create question without its answers",
+                request.getDescription(false),
+                e.getMessage()
+        );
+    }
+
 }
