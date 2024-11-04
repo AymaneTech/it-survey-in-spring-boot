@@ -10,4 +10,9 @@ public class EntityNotFoundException extends RuntimeException {
         super(entityName + " with id " + id + " not found");
         this.id = id;
     }
+
+    public EntityNotFoundException(String message) {
+        super(message);
+        this.id = null;
+    }
 }

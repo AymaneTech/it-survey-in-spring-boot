@@ -1,4 +1,4 @@
-package com.wora.state_of_dev.survey.application.mapper;
+package com.wora.state_of_dev.survey.infrastructure.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

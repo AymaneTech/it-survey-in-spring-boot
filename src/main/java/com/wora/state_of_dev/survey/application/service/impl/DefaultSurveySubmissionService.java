@@ -19,6 +19,7 @@ import com.wora.state_of_dev.survey.domain.valueObject.QuestionId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.metrics.data.RepositoryMetricsAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final SurveyEditionRepository surveyEditionRepository;
+    private final RepositoryMetricsAutoConfiguration repositoryMetricsAutoConfiguration;
 
     private SurveyEditionId surveyEditionId;
 
@@ -95,8 +97,12 @@ public class DefaultSurveySubmissionService implements SurveySubmissionService {
         List<AnswerId> answerIds = answerDto.answer().stream()
                 .map(AnswerId::new)
                 .toList();
-        answerRepository.findAllById(answerIds)
-                .forEach(answer -> incrementSelectionCount(question, answer));
+        List<Answer> answers = answerRepository.findAllById(answerIds);
+
+        if (answers.size() != answerIds.size())
+            throw new EntityNotFoundException("Some of the answer ids not found: " + answerIds);
+
+        answers.forEach(answer -> incrementSelectionCount(question, answer));
     }
 
     private void incrementSelectionCount(Question question, Answer answer) {

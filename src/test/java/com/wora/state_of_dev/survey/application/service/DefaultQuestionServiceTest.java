@@ -76,7 +76,7 @@ class DefaultQuestionServiceTest {
         given(mapper.toResponseDto(any(Question.class))).willAnswer(invocation -> {
             Question arg = invocation.getArgument(0);
             List<AnswerEmbeddableDto> answers = arg.getAnswers()
-                    .stream().map(a -> new AnswerEmbeddableDto(a.getId().value(), a.getText()))
+                    .stream().map(a -> new AnswerEmbeddableDto(a.getId().value(), a.getText(), a.getSelectCount()))
                     .toList();
 
             return new QuestionResponseDto(
