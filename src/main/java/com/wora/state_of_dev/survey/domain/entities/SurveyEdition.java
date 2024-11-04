@@ -31,7 +31,7 @@ public class SurveyEdition {
     private SurveyEditionId id;
 
     @NotNull
-    @FutureOrPresent
+//    @FutureOrPresent
     private LocalDateTime startDate;
 
     @NotNull

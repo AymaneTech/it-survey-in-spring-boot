@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.time.Year;
 
-import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.ENTITY_NOT_FOUND;
-import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED;
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.ENTITY_NOT_FOUND_MESSAGE;
+import static com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler.VALIDATION_FAILED_MESSAGE;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -86,7 +86,7 @@ class ChapterControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND))
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE))
                     .andDo(print());
         }
 
@@ -100,7 +100,7 @@ class ChapterControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(400))
-                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED));
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE));
         }
     }
 
@@ -120,7 +120,7 @@ class ChapterControllerIntegrationTest {
             mockMvc.perform(get("/api/v1/survey-editions/{id}/chapters", 9393L))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND));
+                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE));
         }
     }
 
