@@ -32,6 +32,13 @@ class DateValidatorTest {
     }
 
     @Test
+    void isDateBetween_shouldReturnFalse_whenGivenNullValues() {
+        boolean actual = DateValidator.isDateBetween(null, null, null);
+
+        assertFalse(actual);
+    }
+
+    @Test
     void isDateBetween_ShouldReturnTrue_WhenGivenNotValidDate() {
         LocalDateTime givenDate = LocalDateTime.now().plusDays(10);
         LocalDateTime before = LocalDateTime.now();
