@@ -1,4 +1,4 @@
-package com.wora.state_of_dev.common.application.validation;
+package com.wora.state_of_dev.common.application.validation.validator;
 
 import java.time.LocalDateTime;
 
