@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/it-survey
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5433/it-survey
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
     depends_on:
@@ -18,10 +18,13 @@ services:
       POSTGRES_DB: it-survey
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_PORT: 5433
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - db_data:/var/lib/postgresql/data
+#    I use this command to force the image to use port 5433
+    command: ["postgres", "-p", "5433"]
 
 volumes:
   db_data:
