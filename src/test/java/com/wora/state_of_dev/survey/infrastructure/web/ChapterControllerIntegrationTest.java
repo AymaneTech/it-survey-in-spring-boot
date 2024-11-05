@@ -84,9 +84,9 @@ class ChapterControllerIntegrationTest {
             mockMvc.perform(post("/api/v1/chapters" )
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE))
                     .andDo(print());
         }
 

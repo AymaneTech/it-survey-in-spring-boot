@@ -111,15 +111,15 @@ class QuestionControllerIntegrationTest {
     class CreateTests {
         @Test
         @Rollback
-        void givenChapterIdDoesNotExists_whenCreate_shouldReturnNotFound() throws Exception {
+        void givenChapterIdDoesNotExists_whenCreate_shouldReturnBadRequest() throws Exception {
             QuestionRequestDto invalidRequest = new QuestionRequestDto("your stack", 3939L, AnswerType.SINGLE_CHOICE, answerRequestDtos);
 
             mockMvc.perform(post("/api/v1/questions")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(invalidRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE))
-                    .andExpect(jsonPath("$.code").value(404));
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE))
+                    .andExpect(jsonPath("$.code").value(400));
         }
 
         @Test
@@ -186,9 +186,9 @@ class QuestionControllerIntegrationTest {
             mockMvc.perform(put("/api/v1/questions/{id}", question.id())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(invalidRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE))
-                    .andExpect(jsonPath("$.code").value(404));
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE))
+                    .andExpect(jsonPath("$.code").value(400));
         }
 
         @Test

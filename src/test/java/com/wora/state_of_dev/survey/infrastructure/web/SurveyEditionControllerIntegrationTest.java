@@ -104,15 +104,15 @@ class SurveyEditionControllerIntegrationTest {
 
         @Test
         @Rollback
-        void givenNotExistentSurveyId_whenCreate_shouldReturnNotFound() throws Exception {
+        void givenNotExistentSurveyId_whenCreate_shouldReturnBadRequest() throws Exception {
             SurveyEditionRequestDto invalidRequest = new SurveyEditionRequestDto(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(39), Year.now(), 9393L);
 
             mockMvc.perform(post("/api/v1/survey-editions")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(invalidRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE));
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE));
         }
 
         @Test
@@ -151,9 +151,9 @@ class SurveyEditionControllerIntegrationTest {
             mockMvc.perform(put("/api/v1/survey-editions/{id}", 9999L)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(validRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE));
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE));
         }
 
         @Test
