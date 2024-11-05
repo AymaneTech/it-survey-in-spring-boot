@@ -102,9 +102,9 @@ class SurveyControllerIntegrationTest {
             mockMvc.perform(post("/api/v1/surveys")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404))
-                    .andExpect(jsonPath("$.message").value(ENTITY_NOT_FOUND_MESSAGE));
+                    .andExpect(status().isBadRequest()  )
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE));
         }
 
         @Test
@@ -140,8 +140,9 @@ class SurveyControllerIntegrationTest {
             mockMvc.perform(put("/api/v1/surveys/{id}", createdSurvey.id())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(objectMapper.writeValueAsString(surveyRequest)))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.code").value(404));
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value(400))
+                    .andExpect(jsonPath("$.message").value(VALIDATION_FAILED_MESSAGE));
         }
 
         @Test
