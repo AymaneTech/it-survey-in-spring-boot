@@ -1,8 +1,6 @@
 package com.wora.state_of_dev.owner.infrastructure.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wora.state_of_dev.common.application.validation.validator.UniqueFieldValidator;
-import com.wora.state_of_dev.common.config.TestConfig;
 import com.wora.state_of_dev.common.infrastructure.web.GlobalExceptionHandler;
 import com.wora.state_of_dev.owner.application.dto.OwnerRequestDto;
 import com.wora.state_of_dev.owner.application.dto.OwnerResponseDto;
