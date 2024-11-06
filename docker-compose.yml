@@ -12,6 +12,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
     depends_on:
       - db
+      - cache
   db:
     image: postgres:latest
     environment:
@@ -23,8 +24,19 @@ services:
       - "5433:5433"
     volumes:
       - db_data:/var/lib/postgresql/data
-#    I use this command to force the image to use port 5433
-    command: ["postgres", "-p", "5433"]
+    #    I use this command to force the image to use port 5433
+    command: [ "postgres", "-p", "5433" ]
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - cache:/data
 
 volumes:
   db_data:
+  cache:
+    driver: local

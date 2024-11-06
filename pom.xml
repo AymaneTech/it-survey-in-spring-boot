@@ -95,6 +95,13 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.6.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>3.3.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -127,7 +134,8 @@
                 <version>0.8.11</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/wora/state_of_dev/survey/application/mapper/**</exclude> <!-- Exclude MapStruct package -->
+                        <exclude>com/wora/state_of_dev/survey/application/mapper/**
+                        </exclude> <!-- Exclude MapStruct package -->
                     </excludes>
                 </configuration>
                 <executions>
