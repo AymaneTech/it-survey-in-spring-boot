@@ -2,15 +2,15 @@ spring:
   application:
     name: It Survey
   datasource:
-    url: jdbc:postgresql://localhost:5433/it-survey
-    username: user
-    password: password
+    url: jdbc:postgresql://localhost:5432/it_survey
+    username: postgres
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       ddl-auto: update
     show-sql: true
-logging:
-  level:
-    org.springframework.security: debug
+
+  profiles:
+    active: dockerized
