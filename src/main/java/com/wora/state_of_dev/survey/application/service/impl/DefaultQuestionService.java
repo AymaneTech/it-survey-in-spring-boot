@@ -23,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+import static com.wora.state_of_dev.common.util.OptionalWrapper.orElseThrow;
+
 @Service
 @Transactional
 @Validated
@@ -33,13 +35,14 @@ public class DefaultQuestionService implements QuestionService {
     private final QuestionMapper mapper;
     private final AnswerMapper answerMapper;
 
+    // todo : add findByChapterId, findBySurveyEditionId
+
     @Override
     public List<QuestionResponseDto> findAll() {
         return repository.findAll()
                 .stream().map(mapper::toResponseDto)
                 .toList();
     }
-    // todo : add findByChapterId, findBySurveyEditionId
 
     @Override
     public QuestionResponseDto findById(QuestionId id) {
@@ -51,11 +54,9 @@ public class DefaultQuestionService implements QuestionService {
     @Override
     public QuestionResponseDto create(QuestionRequestDto dto) {
         final ChapterId chapterId = new ChapterId(dto.chapterId());
-        Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
+        Chapter chapter = orElseThrow(chapterRepository.findById(chapterId), "chapter", dto.chapterId());
 
-        if (chapterRepository.isHasSubChapters(chapterId))
-            throw new ChapterHasSubChaptersException(chapterId);
+        ensureHasNoSubChapters(chapterId);
 
         Question question = mapper.toEntity(dto)
                 .setChapter(chapter)
@@ -68,14 +69,13 @@ public class DefaultQuestionService implements QuestionService {
     @Override
     public QuestionResponseDto update(QuestionId id, QuestionRequestDto dto) {
         final ChapterId chapterId = new ChapterId(dto.chapterId());
-        Question question = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("question", id.value()));
+        Question question = orElseThrow(repository.findById(id), "question", id.value());
 
-        if (chapterRepository.isHasSubChapters(chapterId))
-            throw new ChapterHasSubChaptersException(chapterId);
+        ensureHasNoSubChapters(chapterId);
 
-        Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(() -> new EntityNotFoundException("chapter", dto.chapterId()));
+
+        Chapter chapter = orElseThrow(chapterRepository.findById(chapterId), "chapter", dto.chapterId());
+
         question.setText(dto.text())
                 .setAnswerType(dto.answerType())
                 .setChapter(chapter)
@@ -92,12 +92,17 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     private List<Answer> mapAnswersDtoToEntities(List<AnswerRequestDto> answerRequestDtos) {
-        if(answerRequestDtos.isEmpty())
+        if (answerRequestDtos.isEmpty())
             throw new AnswersCannotBeEmptyException("Cannot create question without answers");
 
         return answerRequestDtos
                 .stream()
                 .map(answerMapper::toEntity)
                 .toList();
+    }
+
+    private void ensureHasNoSubChapters(ChapterId chapterId) {
+        if (chapterRepository.isHasSubChapters(chapterId))
+            throw new ChapterHasSubChaptersException(chapterId);
     }
 }

@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "owners")
 
@@ -16,7 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-public class Owner {
+public class Owner implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "value", column = @Column(name = "id"))
