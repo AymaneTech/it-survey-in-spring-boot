@@ -18,6 +18,9 @@ import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.QuestionId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -38,6 +41,7 @@ public class DefaultQuestionService implements QuestionService {
     // todo : add findByChapterId, findBySurveyEditionId
 
     @Override
+    @Cacheable(value = "questions")
     public List<QuestionResponseDto> findAll() {
         return repository.findAll()
                 .stream().map(mapper::toResponseDto)
@@ -45,6 +49,7 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @Cacheable(value = "questions", key = "#id.value()")
     public QuestionResponseDto findById(QuestionId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
@@ -52,12 +57,12 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @CachePut(value = "questions", key = "#result.id()")
     public QuestionResponseDto create(QuestionRequestDto dto) {
         final ChapterId chapterId = new ChapterId(dto.chapterId());
         Chapter chapter = orElseThrow(chapterRepository.findById(chapterId), "chapter", dto.chapterId());
 
         ensureHasNoSubChapters(chapterId);
-
         Question question = mapper.toEntity(dto)
                 .setChapter(chapter)
                 ._setAnswers(mapAnswersDtoToEntities(dto.answers()));
@@ -67,13 +72,12 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @CachePut(value = "questions", key = "#id.value()")
     public QuestionResponseDto update(QuestionId id, QuestionRequestDto dto) {
         final ChapterId chapterId = new ChapterId(dto.chapterId());
         Question question = orElseThrow(repository.findById(id), "question", id.value());
 
         ensureHasNoSubChapters(chapterId);
-
-
         Chapter chapter = orElseThrow(chapterRepository.findById(chapterId), "chapter", dto.chapterId());
 
         question.setText(dto.text())
@@ -85,6 +89,7 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @CacheEvict(value = "questions", allEntries = true)
     public void delete(QuestionId id) {
         if (!repository.existsById(id))
             throw new EntityNotFoundException("question", id.value());

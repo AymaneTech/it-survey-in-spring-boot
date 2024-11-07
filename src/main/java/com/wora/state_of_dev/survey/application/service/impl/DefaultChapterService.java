@@ -14,6 +14,9 @@ import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,6 +32,7 @@ public class DefaultChapterService implements ChapterService {
     private final ChapterMapper mapper;
 
     @Override
+    @Cacheable(value = "chapters")
     public List<ChapterResponseDto> findAllBySurveyEditionId(SurveyEditionId id) {
         if (!surveyEditionRepository.existsById(id))
             throw new EntityNotFoundException("survey edition", id.value());
@@ -39,6 +43,7 @@ public class DefaultChapterService implements ChapterService {
     }
 
     @Override
+    @Cacheable(value = "chapters", key = "#id.value()")
     public ChapterResponseDto findById(ChapterId id) {
         return repository.findById(id)
                 .map(mapper::toChapterResponse)
@@ -46,6 +51,7 @@ public class DefaultChapterService implements ChapterService {
     }
 
     @Override
+    @CachePut(value = "chapters", key = "#result.id()")
     public ChapterResponseDto create(ChapterRequestDto dto) {
         final SurveyEditionId surveyEditionId = new SurveyEditionId(dto.surveyEditionId());
         SurveyEdition surveyEdition = surveyEditionRepository.findById(surveyEditionId)
@@ -69,6 +75,7 @@ public class DefaultChapterService implements ChapterService {
     }
 
     @Override
+    @CachePut(value = "chapters", key = "#id.value()")
     public ChapterResponseDto update(ChapterId id, ChapterRequestDto dto) {
         Chapter chapter = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("chapter ", id.value()));
@@ -78,6 +85,7 @@ public class DefaultChapterService implements ChapterService {
     }
 
     @Override
+    @CacheEvict(value = "chapters", allEntries = true)
     public void delete(ChapterId id) {
         if (!repository.existsById(id))
             throw new EntityNotFoundException("chapter", id.value());

@@ -9,6 +9,9 @@ import com.wora.state_of_dev.owner.domain.OwnerId;
 import com.wora.state_of_dev.owner.domain.OwnerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,6 +27,7 @@ class DefaultOwnerService implements OwnerService {
 
 
     @Override
+    @Cacheable(value = "owners")
     public List<OwnerResponseDto> findAll() {
         return repository.findAll()
                 .stream().map(mapper::toResponseDto)
@@ -31,6 +35,7 @@ class DefaultOwnerService implements OwnerService {
     }
 
     @Override
+    @Cacheable(value = "owners", key = "#id.value()")
     public OwnerResponseDto findById(OwnerId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
@@ -38,12 +43,14 @@ class DefaultOwnerService implements OwnerService {
     }
 
     @Override
+    @CachePut(value = "owners", key = "#result.id()")
     public OwnerResponseDto create(OwnerRequestDto dto) {
         Owner savedOwner = repository.save(mapper.toEntity(dto));
         return mapper.toResponseDto(savedOwner);
     }
 
     @Override
+    @CachePut(value = "owners", key = "#id.value()")
     public OwnerResponseDto update(OwnerId id, OwnerRequestDto dto) {
         Owner owner = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("owner", id.value()));
@@ -53,6 +60,7 @@ class DefaultOwnerService implements OwnerService {
     }
 
     @Override
+    @CacheEvict(value = "owners", allEntries = true)
     public void delete(OwnerId id) {
         if (!repository.existsById(id))
             throw new EntityNotFoundException("owner", id.value());

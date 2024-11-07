@@ -13,6 +13,9 @@ import com.wora.state_of_dev.survey.domain.repository.SurveyRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,6 +31,7 @@ public class DefaultSurveyService implements SurveyService {
     private final SurveyMapper mapper;
 
     @Override
+    @Cacheable(value = "surveys")
     public List<SurveyResponseDto> findAll() {
         return repository.findAll()
                 .stream().map(mapper::toResponseDto)
@@ -35,6 +39,7 @@ public class DefaultSurveyService implements SurveyService {
     }
 
     @Override
+    @Cacheable(value = "surveys", key = "#id.value()")
     public SurveyResponseDto findById(SurveyId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
@@ -43,6 +48,7 @@ public class DefaultSurveyService implements SurveyService {
     }
 
     @Override
+    @CachePut(value = "surveys", key = "#result.id()")
     public SurveyResponseDto create(SurveyRequestDto dto) {
         Owner owner = ownerRepository.findById(new OwnerId(dto.ownerId()))
                 .orElseThrow(() -> new EntityNotFoundException("owner", dto.ownerId()));
@@ -54,6 +60,7 @@ public class DefaultSurveyService implements SurveyService {
     }
 
     @Override
+    @CachePut(value = "surveys", key = "#result.id()")
     public SurveyResponseDto update(SurveyId id, SurveyRequestDto dto) {
         Survey survey = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("survey", id.value()));
@@ -68,6 +75,7 @@ public class DefaultSurveyService implements SurveyService {
     }
 
     @Override
+    @CacheEvict(value = "surveys", allEntries = true)
     public void delete(SurveyId id) {
         if (!repository.existsById(id))
             throw new EntityNotFoundException("survey", id.value());

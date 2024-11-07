@@ -13,6 +13,9 @@ import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,6 +31,7 @@ public class DefaultSurveyEditionService implements SurveyEditionService {
     private final SurveyEditionMapper mapper;
 
     @Override
+    @Cacheable(value = "survey_editions")
     public List<SurveyEditionResponseDto> findAll() {
         return repository.findAll()
                 .stream().map(mapper::toResponseDto)
@@ -35,6 +39,7 @@ public class DefaultSurveyEditionService implements SurveyEditionService {
     }
 
     @Override
+    @Cacheable(value = "survey_editions", key = "#id.value()")
     public SurveyEditionResponseDto findById(SurveyEditionId id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
@@ -42,6 +47,7 @@ public class DefaultSurveyEditionService implements SurveyEditionService {
     }
 
     @Override
+    @CachePut(value = "survey_editions", key = "#result.id()")
     public SurveyEditionResponseDto create(SurveyEditionRequestDto dto) {
         Survey survey = surveyRepository.findById(new SurveyId(dto.surveyId()))
                 .orElseThrow(() -> new EntityNotFoundException("survey", dto.surveyId()));
@@ -53,6 +59,7 @@ public class DefaultSurveyEditionService implements SurveyEditionService {
     }
 
     @Override
+    @CachePut(value = "survey_editions", key = "#id.value()")
     public SurveyEditionResponseDto update(SurveyEditionId id, SurveyEditionRequestDto dto) {
         SurveyEdition surveyEdition = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("survey edition", id.value()));
@@ -68,6 +75,7 @@ public class DefaultSurveyEditionService implements SurveyEditionService {
     }
 
     @Override
+    @CacheEvict(value = "survey_editions", allEntries = true)
     public void delete(SurveyEditionId id) {
         if (!repository.existsById(id))
             throw new EntityNotFoundException("survey edition", id.value());
