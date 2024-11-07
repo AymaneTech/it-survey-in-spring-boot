@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @RequiredArgsConstructor
-public class SurveyEdition {
+public class SurveyEdition implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "value", column = @Column(name = "id"))

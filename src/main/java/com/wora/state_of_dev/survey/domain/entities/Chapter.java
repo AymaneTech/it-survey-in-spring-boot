@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @Accessors(chain = true)
 @NoArgsConstructor
 @ToString
-public class Chapter {
+public class Chapter implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "value", column = @Column(name = "id"))
