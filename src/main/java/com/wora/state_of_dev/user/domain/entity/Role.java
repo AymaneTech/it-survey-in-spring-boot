@@ -22,9 +22,15 @@ public class Role implements Serializable {
     @AttributeOverride(name = "value", column = @Column(name = "id"))
     private RoleId id;
 
+    @Column(unique = true)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
+    @JoinTable(
+            name = "role_authorities",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
+    )
     private List<Authority> authorities = new ArrayList<>();
 
     public Role(String name, List<Authority> authorities) {

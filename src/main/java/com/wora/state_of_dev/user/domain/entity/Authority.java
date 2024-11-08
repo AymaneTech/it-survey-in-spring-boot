@@ -22,17 +22,17 @@ public class Authority implements Serializable {
     @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AuthorityId id;
 
+    @Column(unique = true)
     private String name;
 
+    @Column(unique = true)
     private String value;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "authorities")
     private List<Role> roles = new ArrayList<>();
 
     public Authority(String name, String value) {
         this.name = name;
         this.value = value;
     }
-
-
 }

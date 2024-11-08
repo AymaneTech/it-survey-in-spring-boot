@@ -7,8 +7,10 @@ import com.wora.state_of_dev.user.domain.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -18,17 +20,30 @@ public class UserSeeder {
     private final AuthorityRepository authorityRepository;
 
     @Bean
-    public CommandLineRunner commandLineRunner() {
+    @Order(1)
+    public CommandLineRunner saveAuthorities() {
         return args -> {
-            System.out.println("--- user Command Line Runner ---");
-            if (roleRepository.count() != 0)
-                return;
+            System.out.println("--- Authorities Command Line Runner ---");
+            if (authorityRepository.count() != 0) return;
 
-            System.out.println("--- Inserting the role with their authorities ---");
+            System.out.println("--- Inserting the authorities ---");
+            authorityRepository.saveAll(getDefaultAuthorities());
+        };
+    }
+
+    @Bean
+    @Order(2)
+    public CommandLineRunner saveRoles() {
+        return args -> {
+            System.out.println("--- Roles Command Line Runner ---");
+            if (roleRepository.count() != 0) return;
+
+            System.out.println("--- Inserting roles with their authorities ---");
+            List<Authority> authorities = authorityRepository.findAll();
             roleRepository.saveAll(List.of(
-                    new Role("ADMIN", getDefaultAuthorities()),
-                    new Role("USER", getDefaultAuthorities()),
-                    new Role("OWNER", getDefaultAuthorities())
+                    new Role("ADMIN", authorities),
+                    new Role("USER", authorities),
+                    new Role("OWNER", authorities)
             ));
         };
     }
