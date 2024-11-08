@@ -6,10 +6,10 @@ import com.wora.state_of_dev.survey.application.dto.request.submission.MultiChoi
 import com.wora.state_of_dev.survey.application.dto.request.submission.SingleChoiceSubmissionRequestDto;
 import com.wora.state_of_dev.survey.application.dto.request.submission.SingleQuestionSubmissionRequestDto;
 import com.wora.state_of_dev.survey.application.service.impl.DefaultSurveySubmissionService;
-import com.wora.state_of_dev.survey.domain.entities.Answer;
-import com.wora.state_of_dev.survey.domain.entities.Chapter;
-import com.wora.state_of_dev.survey.domain.entities.Question;
-import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
+import com.wora.state_of_dev.survey.domain.entity.Answer;
+import com.wora.state_of_dev.survey.domain.entity.Chapter;
+import com.wora.state_of_dev.survey.domain.entity.Question;
+import com.wora.state_of_dev.survey.domain.entity.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
 import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.SurveyEditionNotOpenedNow;

@@ -9,9 +9,9 @@ import com.wora.state_of_dev.survey.application.dto.response.QuestionResponseDto
 import com.wora.state_of_dev.survey.application.mapper.AnswerMapper;
 import com.wora.state_of_dev.survey.application.mapper.QuestionMapper;
 import com.wora.state_of_dev.survey.application.service.impl.DefaultQuestionService;
-import com.wora.state_of_dev.survey.domain.entities.Answer;
-import com.wora.state_of_dev.survey.domain.entities.Chapter;
-import com.wora.state_of_dev.survey.domain.entities.Question;
+import com.wora.state_of_dev.survey.domain.entity.Answer;
+import com.wora.state_of_dev.survey.domain.entity.Chapter;
+import com.wora.state_of_dev.survey.domain.entity.Question;
 import com.wora.state_of_dev.survey.domain.exception.ChapterHasSubChaptersException;
 import com.wora.state_of_dev.survey.domain.repository.ChapterRepository;
 import com.wora.state_of_dev.survey.domain.repository.QuestionRepository;

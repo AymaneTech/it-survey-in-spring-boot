@@ -4,9 +4,9 @@ import com.wora.state_of_dev.common.application.validation.validator.DateValidat
 import com.wora.state_of_dev.common.domain.exception.EntityNotFoundException;
 import com.wora.state_of_dev.survey.application.dto.request.submission.*;
 import com.wora.state_of_dev.survey.application.service.SurveySubmissionService;
-import com.wora.state_of_dev.survey.domain.entities.Answer;
-import com.wora.state_of_dev.survey.domain.entities.Question;
-import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
+import com.wora.state_of_dev.survey.domain.entity.Answer;
+import com.wora.state_of_dev.survey.domain.entity.Question;
+import com.wora.state_of_dev.survey.domain.entity.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.GivenAnswerNotBelongToQuestion;
 import com.wora.state_of_dev.survey.domain.exception.QuestionNotBelongToSurveyEdition;
 import com.wora.state_of_dev.survey.domain.exception.SurveyEditionNotOpenedNow;
@@ -21,7 +21,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.autoconfigure.metrics.data.RepositoryMetricsAutoConfiguration;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.List;

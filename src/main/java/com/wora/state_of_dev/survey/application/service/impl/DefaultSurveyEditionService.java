@@ -5,8 +5,8 @@ import com.wora.state_of_dev.survey.application.dto.request.SurveyEditionRequest
 import com.wora.state_of_dev.survey.application.dto.response.SurveyEditionResponseDto;
 import com.wora.state_of_dev.survey.application.mapper.SurveyEditionMapper;
 import com.wora.state_of_dev.survey.application.service.SurveyEditionService;
-import com.wora.state_of_dev.survey.domain.entities.Survey;
-import com.wora.state_of_dev.survey.domain.entities.SurveyEdition;
+import com.wora.state_of_dev.survey.domain.entity.Survey;
+import com.wora.state_of_dev.survey.domain.entity.SurveyEdition;
 import com.wora.state_of_dev.survey.domain.repository.SurveyEditionRepository;
 import com.wora.state_of_dev.survey.domain.repository.SurveyRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;

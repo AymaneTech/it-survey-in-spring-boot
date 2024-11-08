@@ -1,7 +1,7 @@
 package com.wora.state_of_dev.survey.domain.repository;
 
 import com.wora.state_of_dev.survey.application.dto.response.ChapterResponseDto;
-import com.wora.state_of_dev.survey.domain.entities.Chapter;
+import com.wora.state_of_dev.survey.domain.entity.Chapter;
 import com.wora.state_of_dev.survey.domain.valueObject.ChapterId;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyEditionId;
 import jakarta.validation.constraints.NotBlank;

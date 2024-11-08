@@ -1,7 +1,7 @@
 package com.wora.state_of_dev.survey.application.dto.request;
 
 import com.wora.state_of_dev.common.application.validation.ReferenceExists;
-import com.wora.state_of_dev.survey.domain.entities.Survey;
+import com.wora.state_of_dev.survey.domain.entity.Survey;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;

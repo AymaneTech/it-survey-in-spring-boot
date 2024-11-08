@@ -1,6 +1,6 @@
 package com.wora.state_of_dev.survey.domain.repository;
 
-import com.wora.state_of_dev.survey.domain.entities.Survey;
+import com.wora.state_of_dev.survey.domain.entity.Survey;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 import org.springframework.data.jpa.repository.JpaRepository;
 

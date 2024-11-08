@@ -1,4 +1,4 @@
-package com.wora.state_of_dev.survey.domain.entities;
+package com.wora.state_of_dev.survey.domain.entity;
 
 import com.wora.state_of_dev.owner.domain.Owner;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;

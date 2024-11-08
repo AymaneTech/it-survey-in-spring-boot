@@ -9,7 +9,7 @@ import com.wora.state_of_dev.survey.application.dto.request.SurveyRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.SurveyResponseDto;
 import com.wora.state_of_dev.survey.application.mapper.SurveyMapper;
 import com.wora.state_of_dev.survey.application.service.impl.DefaultSurveyService;
-import com.wora.state_of_dev.survey.domain.entities.Survey;
+import com.wora.state_of_dev.survey.domain.entity.Survey;
 import com.wora.state_of_dev.survey.domain.repository.SurveyRepository;
 import com.wora.state_of_dev.survey.domain.valueObject.SurveyId;
 import org.junit.jupiter.api.BeforeEach;

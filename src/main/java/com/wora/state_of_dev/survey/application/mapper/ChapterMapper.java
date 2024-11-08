@@ -3,7 +3,7 @@ package com.wora.state_of_dev.survey.application.mapper;
 import com.wora.state_of_dev.common.application.mapper.IdValueObjectMapper;
 import com.wora.state_of_dev.survey.application.dto.request.ChapterRequestDto;
 import com.wora.state_of_dev.survey.application.dto.response.ChapterResponseDto;
-import com.wora.state_of_dev.survey.domain.entities.Chapter;
+import com.wora.state_of_dev.survey.domain.entity.Chapter;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

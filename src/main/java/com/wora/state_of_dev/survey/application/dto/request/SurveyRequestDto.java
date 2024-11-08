@@ -4,7 +4,7 @@ import com.wora.state_of_dev.common.application.validation.ReferenceExists;
 import com.wora.state_of_dev.common.application.validation.UniqueField;
 import com.wora.state_of_dev.owner.domain.Owner;
 import com.wora.state_of_dev.owner.domain.OwnerId;
-import com.wora.state_of_dev.survey.domain.entities.Survey;
+import com.wora.state_of_dev.survey.domain.entity.Survey;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
