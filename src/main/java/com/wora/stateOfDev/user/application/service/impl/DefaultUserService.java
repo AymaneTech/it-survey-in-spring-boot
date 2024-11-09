@@ -1,7 +1,8 @@
 package com.wora.stateOfDev.user.application.service.impl;
 
-import com.wora.stateOfDev.common.domain.exception.EntityNotFoundException;
+import com.wora.stateOfDev.user.application.dto.request.LoginRequestDto;
 import com.wora.stateOfDev.user.application.dto.request.RegisterRequestDto;
+import com.wora.stateOfDev.user.application.dto.response.AuthenticationResponse;
 import com.wora.stateOfDev.user.application.dto.response.UserResponseDto;
 import com.wora.stateOfDev.user.application.mapper.AuthenticationMapper;
 import com.wora.stateOfDev.user.application.service.UserService;
@@ -11,6 +12,8 @@ import com.wora.stateOfDev.user.domain.repository.RoleRepository;
 import com.wora.stateOfDev.user.domain.repository.UserRepository;
 import com.wora.stateOfDev.user.domain.valueObject.RoleId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ public class DefaultUserService implements UserService {
     private final RoleRepository roleRepository;
     private final AuthenticationMapper mapper;
     private final PasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserResponseDto register(RegisterRequestDto dto) {
@@ -37,11 +41,14 @@ public class DefaultUserService implements UserService {
         return mapper.toResponseDto(savedUser);
     }
 
-
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new EntityNotFoundException("user", username));
+    public AuthenticationResponse login(LoginRequestDto dto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        dto.email(),
+                        dto.password()));
+
+        return new AuthenticationResponse("here here", "here");
     }
 
     @Override
