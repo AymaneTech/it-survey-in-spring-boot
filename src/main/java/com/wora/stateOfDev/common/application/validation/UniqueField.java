@@ -1,10 +1,15 @@
 package com.wora.stateOfDev.common.application.validation;
 
-import com.wora.stateOfDev.common.application.validation.validator.UniqueFieldValidator;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.*;
+import com.wora.stateOfDev.common.application.validation.validator.UniqueFieldValidator;
 
 @Documented
 @Constraint(validatedBy = UniqueFieldValidator.class)

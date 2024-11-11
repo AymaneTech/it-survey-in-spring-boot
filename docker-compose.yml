@@ -14,7 +14,7 @@ services:
       - db
       - cache
   db:
-    image: postgres:latest
+    image: postgres:16
     environment:
       POSTGRES_DB: it-survey
       POSTGRES_USER: user
@@ -40,3 +40,4 @@ volumes:
   db_data:
   cache:
     driver: local
+#    PGHOST=localhost PGPORT=5433 PGUSER=user PGPASSWORD=password psql -d it-survey

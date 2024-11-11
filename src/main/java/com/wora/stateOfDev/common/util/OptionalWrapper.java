@@ -9,4 +9,9 @@ public class OptionalWrapper {
         return optional.orElseThrow(() -> new EntityNotFoundException(entity, id));
     }
 
+    public static <T> T orElseThrow(Optional<T> optional, String message) {
+        return optional.orElseThrow(() -> new EntityNotFoundException(message));
+    }
+
+
 }

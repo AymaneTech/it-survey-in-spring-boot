@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now(),
-                "this exception not specified, caught just by global exception",
+                "this exception not specified, caught just by global exception, here is the exception if you care about it (" + e.getClass() +")",
                 request.getDescription(false),
                 e.getMessage()
         );

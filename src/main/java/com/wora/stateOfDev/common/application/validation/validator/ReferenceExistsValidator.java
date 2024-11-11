@@ -1,20 +1,20 @@
-// ShouldExistsValidator.java
 package com.wora.stateOfDev.common.application.validation.validator;
 
-import com.wora.stateOfDev.common.application.validation.ReferenceExists;
+import java.lang.reflect.InvocationTargetException;
+
 import jakarta.persistence.EntityManager;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.RequiredArgsConstructor;
+
+import com.wora.stateOfDev.common.application.validation.ReferenceExists;
+
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class ReferenceExistsValidator implements ConstraintValidator<ReferenceExists, Long> {
-
-    private final static String FIELD_NAME = "id";
 
     private final EntityManager entityManager;
     private Class<?> entityClass;
