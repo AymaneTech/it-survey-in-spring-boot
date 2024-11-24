@@ -1,31 +1,53 @@
 package com.wora.stateOfDev.user.infrastructure.seeder;
 
+import com.wora.stateOfDev.common.domain.exception.EntityNotFoundException;
 import com.wora.stateOfDev.user.domain.entity.Authority;
 import com.wora.stateOfDev.user.domain.entity.Role;
+import com.wora.stateOfDev.user.domain.entity.User;
 import com.wora.stateOfDev.user.domain.repository.AuthorityRepository;
 import com.wora.stateOfDev.user.domain.repository.RoleRepository;
+import com.wora.stateOfDev.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UserSeeder {
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
 
     @Bean
+    @Order(3)
+    public CommandLineRunner createDefaultUser(UserRepository repository, PasswordEncoder passwordEncoder) {
+        return args -> {
+            Role role = roleRepository.findByName("ADMIN")
+                    .orElseThrow(() -> new EntityNotFoundException("role with name Admin not found"));
+
+            repository.save(new User(
+                    "Super Admin", "Admin LastName",
+                    "superadmin@gmail.com",
+                    passwordEncoder.encode("password"),
+                    role
+            ));
+        };
+    }
+
+    @Bean
     @Order(1)
     public CommandLineRunner saveAuthorities() {
         return args -> {
-            System.out.println("--- Authorities Command Line Runner ---");
+            log.info("--- Authorities Command Line Runner ---");
             if (authorityRepository.count() != 0) return;
 
-            System.out.println("--- Inserting the authorities ---");
+            log.info("--- Inserting the authorities ---");
             authorityRepository.saveAll(getDefaultAuthorities());
         };
     }
@@ -34,10 +56,10 @@ public class UserSeeder {
     @Order(2)
     public CommandLineRunner saveRoles() {
         return args -> {
-            System.out.println("--- Roles Command Line Runner ---");
+            log.info("--- Roles Command Line Runner ---");
             if (roleRepository.count() != 0) return;
 
-            System.out.println("--- Inserting roles with their authorities ---");
+            log.info("--- Inserting roles with their authorities ---");
             List<Authority> authorities = authorityRepository.findAll();
             roleRepository.saveAll(List.of(
                     new Role("ADMIN", authorities),

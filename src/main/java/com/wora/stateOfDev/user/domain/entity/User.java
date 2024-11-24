@@ -45,6 +45,13 @@ public class User implements UserDetails {
     @ManyToOne
     private Role role;
 
+    public User(String firstName, String lastName, String email, String password, Role role) {
+        this.name = new Name(firstName, lastName);
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == null || role.getAuthorities() == null) {
