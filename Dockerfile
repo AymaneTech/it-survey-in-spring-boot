@@ -1,12 +1,17 @@
-FROM openjdk:21-jdk-slim
-LABEL authors="Aymane El Maini"
+FROM maven:3.9.2-eclipse-temurin-17-alpine AS maven
+WORKDIR /app
+COPY ./pom.xml ./pom.xml
 
-VOLUME /tmp
+COPY ./src .
 
-EXPOSE 8080
+RUN mvn dependency:go-offline -B
 
-ARG JAR_FILE=target/it-survey.jar
+RUN mvn clean package -X
 
-COPY ${JAR_FILE} app.jar
+FROM openjdk:22-jdk
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+WORKDIR /app
+COPY --from=maven /app/target/jars/untitled.jar .
+
+
+CMD ["java", "-jar", "untitled.jar"]
